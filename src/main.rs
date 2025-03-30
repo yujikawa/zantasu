@@ -1,5 +1,5 @@
 mod app;
-
+mod scenes;
 use app::*;
 use leptos::prelude::*;
 
