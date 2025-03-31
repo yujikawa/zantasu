@@ -2,8 +2,11 @@ use crate::scenes::finish::FinishScene;
 use crate::scenes::guild::GuildScene;
 use crate::scenes::register::RegisterScene;
 use crate::scenes::start::StartScene;
+use crate::scenes::task_register::TaskRegisterScene;
+use crate::scenes::task_list::TaskListScene;
+
 use leptos::prelude::*;
-use leptos::task::{self, spawn_local};
+// use leptos::task::{self, spawn_local};
 
 use wasm_bindgen::prelude::*;
 
@@ -19,6 +22,8 @@ pub enum Scene {
     Register,
     Guild,
     Finish,
+    TaskRegister,
+    TaskList,
 }
 
 #[component]
@@ -27,6 +32,9 @@ pub fn App() -> impl IntoView {
     let scene = RwSignal::new(Scene::Start);
 
     view! {
+
+
+
         <div>
         <Show
         when=move || scene.get() == Scene::Start
@@ -38,7 +46,8 @@ pub fn App() -> impl IntoView {
         <Show
         when=move || scene.get() == Scene::Guild
         fallback=|| ()>
-            <GuildScene scene=scene/>
+
+        <GuildScene scene=scene/>
 
         </Show>
 
@@ -55,6 +64,21 @@ pub fn App() -> impl IntoView {
             <FinishScene scene=scene/>
 
         </Show>
+
+        <Show
+        when=move || scene.get() == Scene::TaskRegister
+        fallback=|| ()>
+            <TaskRegisterScene scene=scene/>
+
+        </Show>
+
+        <Show
+        when=move || scene.get() == Scene::TaskList
+        fallback=|| ()>
+            <TaskListScene scene=scene/>
+
+        </Show>
+        
 
 
         </div>

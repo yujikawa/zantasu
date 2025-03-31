@@ -1,10 +1,14 @@
 use leptos::prelude::*;
 
 use crate::app::Scene;
+use crate::components::window_message::WindowMessage;
 
 #[component]
 pub fn FinishScene(scene: RwSignal<Scene>) -> impl IntoView {
+    let message = RwSignal::new("今日もお疲れさまでした！".to_string());
+
     view! {
+        
         <div style="position: fixed; top:0; left:0; right:0; bottom:0; overflow: hidden;">
             // === 背景 ===
             <img src="public/assets/backgrounds/guild_outside2.png"
@@ -13,21 +17,8 @@ pub fn FinishScene(scene: RwSignal<Scene>) -> impl IntoView {
                 <img src="public/assets/characters/byebye.png"
                     style="position: absolute; right: 50px; bottom: 0; height: 600px;" />
 
+            <WindowMessage message=message/>
 
-                    <div style="
-                    position: absolute;
-                    left: 50%;
-                    bottom: 20px;
-                    transform: translateX(-50%);
-                    width: 80%;
-                    background: rgba(31, 29, 29, 0.7);
-                    border: 2px solid #000;
-                    border-radius: 10px;
-                    padding: 16px;
-                    font-size: 20px;
-                    ">
-        "今日もお疲れさまでした！"
-            </div>
 
             <button
             style="

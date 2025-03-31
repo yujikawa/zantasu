@@ -6,7 +6,7 @@ use crate::components::window_message::WindowMessage;
 #[component]
 pub fn RegisterScene(scene: RwSignal<Scene>) -> impl IntoView {
     let message = RwSignal::new(
-        "初めての方ですね？まずはハードワーカー登録が必要なのでこちらに名前を記入してください。お手元の魔道具、打鍵石で入力するのよ"
+        "初めての方ですね？まずはハードワーカー登録が必要なのでこちらに名前を記入してください。お手元の魔道具、打鍵石で入力できますよ"
             .to_string(),
     );
     let name = RwSignal::new("".to_string());
@@ -20,7 +20,8 @@ pub fn RegisterScene(scene: RwSignal<Scene>) -> impl IntoView {
             <img src="public/assets/characters/register.png"
                 style="position: absolute; right: 50px; bottom: 0; height: 600px;" />
 
-            <div style="position: absolute; top:200px; left:50px; padding:10px; width:400px; height:200px; background:rgba(31, 29, 29, 0.7);">
+            <div style="position: absolute; top:200px; left:50px; padding:10px; width:400px; height:200px; background:rgba(31, 29, 29, 0.7);  border: 2px solid #ffffff;
+  border-radius: 12px;">
                 <h2>"ハードワーカー登録書"</h2>
 
                 <input type="text"
