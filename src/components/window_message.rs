@@ -4,7 +4,7 @@ use leptos::prelude::*;
 pub fn WindowMessage(message: RwSignal<String>) -> impl IntoView {
     view! {
         <div class="message-window">
-            <div class="name-box">"アリナ"</div>
+            <div class="name-box">"リーナ"</div>
             <div class="text-box">
             {move || message.get()}
             </div>
