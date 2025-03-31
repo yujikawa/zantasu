@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "残業が嫌いなので、タスク管理はじめました",
+        "title": "残業したくないので、タスク管理はじめました。",
         "width": 960,
         "height": 800,
         "resizable": false

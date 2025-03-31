@@ -21,11 +21,11 @@ pub fn RegisterScene(scene: RwSignal<Scene>) -> impl IntoView {
                 style="position: absolute; right: 50px; bottom: 0; height: 600px;" />
 
             <div style="position: absolute; top:200px; left:50px; padding:10px; width:400px; height:200px; background:rgba(31, 29, 29, 0.7);  border: 2px solid #ffffff;
-  border-radius: 12px;">
+    border-radius: 12px;">
                 <h2>"ハードワーカー登録書"</h2>
 
                 <input type="text"
-                placeholder="ここに名前を入力してね" 
+                placeholder="ここに名前を入力してね"
                 value="test"
                 on:input:target=move |ev| {
                     name.set(ev.target().value());

@@ -4,15 +4,34 @@ use crate::models::task::Task;
 use leptos::prelude::*;
 
 #[component]
-pub fn TaskRegisterScene(scene: RwSignal<Scene>) -> impl IntoView {
-    let message = RwSignal::new("依頼内容を記載してくださいね！".to_string());
-
+pub fn TaskRegisterScene(
+    scene: RwSignal<Scene>,
+    hardworker_name: RwSignal<String>,
+    tasks: RwSignal<Vec<Task>>,
+) -> impl IntoView {
+    let message = RwSignal::new(format!(
+        "{}さん、依頼の新規登録はこちらで記載してくださいね！",
+        hardworker_name.get()
+    ));
     let title = RwSignal::new(String::new());
     let description = RwSignal::new(String::new());
     let due_date = RwSignal::new(String::new());
-
+    let title_ref = NodeRef::<leptos::html::Input>::new();
+    let description_ref = NodeRef::<leptos::html::Textarea>::new();
+    let due_date_ref = NodeRef::<leptos::html::Input>::new();
+    Effect::new(move |_| {
+        if let Some(input) = title_ref.get() {
+            input.set_value(&title.get());
+        }
+        if let Some(textarea) = description_ref.get() {
+            textarea.set_value(&description.get());
+        }
+        if let Some(input) = due_date_ref.get() {
+            input.set_value(&due_date.get());
+        }
+    });
     let submit_task = move |_| {
-        let task = Task {
+        let new_task = Task {
             title: title.get(),
             description: if description.get().is_empty() {
                 None
@@ -26,6 +45,9 @@ pub fn TaskRegisterScene(scene: RwSignal<Scene>) -> impl IntoView {
                 Some(due_date.get())
             },
         };
+        // タスクの新規登録
+        tasks.update(|list| list.push(new_task));
+        message.set(format!("「{}」を登録しました！", title.get()));
 
         // on_submit.run(task);
         // 入力リセット
@@ -53,20 +75,31 @@ pub fn TaskRegisterScene(scene: RwSignal<Scene>) -> impl IntoView {
             <h3>"新しい依頼の登録"</h3>
             <div>
                 <label>"依頼タイトル（必須）"</label>
-                <input placeholder="例: ゴブリン退治" on:input=move |e| title.set(event_target_value(&e)) />
+                <input
+                node_ref=title_ref
+                placeholder="例: ゴブリン退治" on:input=move |e| title.set(event_target_value(&e)) />
             </div>
             <div>
                 <label>"依頼詳細（任意）"</label>
-                <textarea placeholder="例: 西の森で発生中" on:input=move |e| description.set(event_target_value(&e))></textarea>
+                <textarea
+                node_ref=description_ref
+
+                placeholder="例: 西の森で発生中" on:input=move |e| description.set(event_target_value(&e))>
+                {move || description.get()}
+                </textarea>
             </div>
             <div>
                 <label>"締切日（任意）"</label>
-                <input placeholder="例: 2025-05-01" on:input=move |e| due_date.set(event_target_value(&e)) />
+                <input
+                node_ref=due_date_ref
+
+                placeholder="例: 2025-05-01" on:input=move |e| due_date.set(event_target_value(&e)) />
             </div>
-            // <button on:click=submit_task>"認可"</button>
-            <button style="background:rgba(220, 90, 90, 0.7);" on:click=move |_| scene.set(Scene::Guild)>"閉じる"</button>
-            <button style="background:rgba(90, 116, 220, 0.7);margin-left:10px;" on:click=submit_task>"登録"</button>
-    
+
+            <div style="margin-top: 20px;">
+                <button style="background:rgba(220, 90, 90, 0.7);" on:click=move |_| scene.set(Scene::Guild)>"閉じる"</button>
+                <button style="background:rgba(90, 116, 220, 0.7);margin-left:10px;" on:click=submit_task>"登録"</button>
+            </div>
         </div>
 
     </div>

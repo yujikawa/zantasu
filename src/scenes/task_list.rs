@@ -1,37 +1,30 @@
 use crate::app::Scene;
 use crate::components::window_message::WindowMessage;
-use leptos::prelude::*;
-use serde::{Deserialize, Serialize};
-
-#[derive(Deserialize, Serialize, Debug)]
-struct Task {
-    title: String,
-    description: String,
-    rank: String,
-    due_date: String,
-}
-
-impl Task {
-    fn new(title: String, description: String, rank: String, due_date: String) -> Self {
-        return Task {
-            title,
-            description,
-            rank,
-            due_date,
-        };
-    }
-}
+use crate::models::task::Task;
+use leptos::{logging, prelude::*};
 
 #[component]
-pub fn TaskListScene(scene: RwSignal<Scene>) -> impl IntoView {
-    let message = RwSignal::new("あなたへの依頼が確認できます。依頼が完了したら忘れずに報告してくださいね！".to_string());
+pub fn TaskListScene(
+    scene: RwSignal<Scene>,
+    hardworker_name: RwSignal<String>,
+    tasks: RwSignal<Vec<Task>>,
+) -> impl IntoView {
+    let message = RwSignal::new(format!(
+        "{}さんへの依頼が確認できます。依頼が完了したら忘れずに報告してくださいね！",
+        hardworker_name.get()
+    ));
 
-    let tasks: RwSignal<Vec<String>> =
-        RwSignal::new(vec!["薬草採取".to_string(), "ゴブリン退治".to_string()]);
-
-    // let close_task_list = move |_ev: leptos::ev::MouseEvent| {
-    //     scene.set(Scene::Guild);
-    // };
+    fn select_task(message: RwSignal<String>, selected_task: Task) {
+        let new_message = match selected_task.description {
+            Some(description) => {
+                format!("依頼の詳細は..{}ということみたいです！", description)
+            }
+            None => format!("依頼の詳細は..無いみたいですね..",),
+        };
+        logging::log!("{}", message.get());
+        message.set(new_message);
+        logging::log!("{}", message.get());
+    }
 
     view! {
 
@@ -49,20 +42,38 @@ pub fn TaskListScene(scene: RwSignal<Scene>) -> impl IntoView {
         <WindowMessage message={ message }/>
 
     </div>
-        <div style="position: absolute; top:100px; left:10px; padding:10px; width:500px; height:500px; background:rgba(31, 29, 29, 0.7);  border: 2px solid #ffffff;
-  border-radius: 12px;">
-        <h2>"依頼一覧"</h2>
-        <ul>
-            <For
-                each=move || tasks.get()
-                key=|task| task.clone() // task自体がキー
-                children=move |task| view! {
-                    <li>{task}</li>
-                }
-            />
-        </ul>
-        <button style="background:rgba(220, 90, 90, 0.7);" on:click=move |_| scene.set(Scene::Guild)>"閉じる"</button>
-
+        <div class="task-list-window">
+            <div class="task-list-title">"依頼一覧"</div>
+            <div class="task-list-scroll">
+                <For
+                    each=move || tasks.get()
+                    key=|task| task.clone() // task自体がキー
+                    children=move |task| view! {
+                    <div class="task-item"
+                    on:click=move |_| select_task(message, task.clone())
+                    >
+                        <div>{task.title.clone()}</div>
+                        <div>{task.due_date.clone().unwrap_or("締切未定".into())}</div>
+                        
+                    </div>
+                    }
+                />
+            </div>
         </div>
+        <button
+        style="
+            position: absolute; 
+            right: 10px;
+            top: 10px;
+            transform: translateX(-50%);
+            padding: 16px 32px;
+            font-size: 24px;
+            border-radius: 8px;
+            background:rgba(220, 90, 90, 0.7);
+        "
+        on:click=move |_| scene.set(Scene::Guild)
+        >
+        "戻る"
+        </button>
     }
 }

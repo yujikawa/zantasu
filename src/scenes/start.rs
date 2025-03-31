@@ -3,7 +3,7 @@ use leptos::prelude::*;
 use crate::app::Scene;
 
 #[component]
-pub fn StartScene(scene: RwSignal<Scene>) -> impl IntoView {
+pub fn StartScene(scene: RwSignal<Scene>, hardworker_name: RwSignal<String>) -> impl IntoView {
     view! {
         <div style="position: fixed; top:0; left:0; right:0; bottom:0; overflow: hidden;">
             // === 背景 ===
@@ -25,7 +25,7 @@ pub fn StartScene(scene: RwSignal<Scene>) -> impl IntoView {
                 font-size: 24px;
                 border-radius: 8px;
             "
-            on:click=move |_| scene.set(Scene::Register)
+            on:click=move |_| if hardworker_name.get()== "" { scene.set(Scene::Register) } else {scene.set(Scene::Guild)}
             >
             "業務スタート"
             </button>

@@ -1,30 +1,28 @@
 use crate::app::Scene;
 use crate::components::menu_bar::MenuBarComponent;
 use crate::components::window_message::WindowMessage;
+use crate::models::task::Task;
 
 use leptos::prelude::*;
 
 #[component]
-pub fn GuildScene(scene: RwSignal<Scene>) -> impl IntoView {
-    let hard_worker_name = "hogehoge".to_string();
-    let welcome_message = format!(
-        "{}さん、ようこそ残業ギルドへ！上部のメニューからやりたいことを選択してね。",
-        hard_worker_name
-    );
+pub fn GuildScene(
+    scene: RwSignal<Scene>,
+    hardworker_name: RwSignal<String>,
+    tasks: RwSignal<Vec<Task>>,
+) -> impl IntoView {
     let receptionist = RwSignal::new("normal_stand.png".to_string());
-
-    let task = vec!["hoge", "hoge"];
-    let task_count = RwSignal::new(2);
+    let task_count = RwSignal::new(tasks.get().len());
 
     let welcome_message = if task_count.get() == 0 {
         format!(
             "{}さん、ようこそ残業ギルドへ！上部のメニューからやりたいことを選択してね。",
-            hard_worker_name
+            hardworker_name.get()
         )
     } else {
         format!(
             "{}さん、受注している依頼が{}件あるみたいね...しっかり終わらせて報告してくださいね",
-            hard_worker_name,
+            hardworker_name.get(),
             task_count.get(),
         )
     };
