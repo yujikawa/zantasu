@@ -5,10 +5,10 @@ use crate::app::Scene;
 #[component]
 pub fn StartScene(scene: RwSignal<Scene>, hardworker_name: RwSignal<String>) -> impl IntoView {
     view! {
-        <div style="position: fixed; top:0; left:0; right:0; bottom:0; overflow: hidden;">
+        <div class="zentas-main">
             // === 背景 ===
             <img src="public/assets/backgrounds/guild_outside.png"
-                style="position: absolute; width: 100%; height: 100%; object-fit: cover;" />
+                class="zentas-bg"/>
 
             // === タイトルロゴ ===
             <img src="public/assets/logo/title.png"

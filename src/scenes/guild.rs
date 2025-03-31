@@ -61,7 +61,7 @@ pub fn GuildScene(
                 </Show>
 
 
-                // === アリナ（立ち絵） ===
+                // === 受付嬢（立ち絵） ===
                 <img src={move || format!("public/assets/characters/{}", receptionist.get())}
                     style="position: absolute; right: 50px; bottom: 0; height: 600px;" />
         // === セリフウィンドウ ===

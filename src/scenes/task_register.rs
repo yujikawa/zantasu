@@ -58,42 +58,44 @@ pub fn TaskRegisterScene(
 
     view! {
 
-        <div style="position: fixed; top:0; left:0; right:0; bottom:0; overflow: hidden;">
+        <div class="zentas-main">
 
         // === 背景 ===
         <img src="public/assets/backgrounds/guild_inside.png"
-            style="position: absolute; width: 100%; height: 100%; object-fit: cover;" />
+            class="zentas-bg" />
 
-        // === アリナ（立ち絵） ===
-        <img src="public/assets/characters/happy.png"
-            style="position: absolute; right: 50px; bottom: 0; height: 600px;" />
+        // === 受付嬢（立ち絵） ===
+        <img src="public/assets/characters/memo.png"
+            class="zentas-person" />
         // === セリフウィンドウ ===
         <WindowMessage message={ message }/>
 
         //  依頼書
         <div class="task-form">
-            <h3>"新しい依頼の登録"</h3>
-            <div>
-                <label>"依頼タイトル（必須）"</label>
-                <input
-                node_ref=title_ref
-                placeholder="例: ゴブリン退治" on:input=move |e| title.set(event_target_value(&e)) />
-            </div>
-            <div>
-                <label>"依頼詳細（任意）"</label>
-                <textarea
-                node_ref=description_ref
+        <div class="task-list-title">"新しい依頼の登録"</div>
+            <div class="task-form-input-list">
+                <div class="task-form-input">
+                    <label>"依頼タイトル（必須）"</label>
+                    <input
+                    node_ref=title_ref
+                    placeholder="例: ゴブリン退治" on:input=move |e| title.set(event_target_value(&e)) />
+                </div>
+                <div class="task-form-input">
+                    <label>"依頼詳細（任意）"</label>
+                    <textarea
+                    node_ref=description_ref
 
-                placeholder="例: 西の森で発生中" on:input=move |e| description.set(event_target_value(&e))>
-                {move || description.get()}
-                </textarea>
-            </div>
-            <div>
-                <label>"締切日（任意）"</label>
-                <input
-                node_ref=due_date_ref
+                    placeholder="例: 西の森で発生中" on:input=move |e| description.set(event_target_value(&e))>
+                    {move || description.get()}
+                    </textarea>
+                </div>
+                <div class="task-form-input">
+                    <label>"締切日（任意）"</label>
+                    <input
+                    node_ref=due_date_ref
 
-                placeholder="例: 2025-05-01" on:input=move |e| due_date.set(event_target_value(&e)) />
+                    placeholder="例: 2025-05-01" on:input=move |e| due_date.set(event_target_value(&e)) />
+                </div>
             </div>
 
             <div style="margin-top: 20px;">

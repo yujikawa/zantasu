@@ -8,14 +8,14 @@ pub fn FinishScene(scene: RwSignal<Scene>) -> impl IntoView {
     let message = RwSignal::new("今日もお疲れさまでした！".to_string());
 
     view! {
-        
-        <div style="position: fixed; top:0; left:0; right:0; bottom:0; overflow: hidden;">
+
+        <div class="zentas-main">
             // === 背景 ===
             <img src="public/assets/backgrounds/guild_outside2.png"
-                style="position: absolute; width: 100%; height: 100%; object-fit: cover;" />
+                class="zentas-bg" />
 
                 <img src="public/assets/characters/byebye.png"
-                    style="position: absolute; right: 50px; bottom: 0; height: 600px;" />
+                    class="zentas-person" />
 
             <WindowMessage message=message/>
 

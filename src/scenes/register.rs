@@ -12,13 +12,13 @@ pub fn RegisterScene(scene: RwSignal<Scene>) -> impl IntoView {
     let name = RwSignal::new("".to_string());
 
     view! {
-        <div style="position: fixed; top:0; left:0; right:0; bottom:0; overflow: hidden;">
+        <div class="zentas-main">
             // === 背景 ===
             <img src="public/assets/backgrounds/guild_day.png"
-                style="position: absolute; width: 100%; height: 100%; object-fit: cover;" />
+                class="zentas-bg" />
 
             <img src="public/assets/characters/register.png"
-                style="position: absolute; right: 50px; bottom: 0; height: 600px;" />
+                class="zentas-person" />
 
             <div style="position: absolute; top:200px; left:50px; padding:10px; width:400px; height:200px; background:rgba(31, 29, 29, 0.7);  border: 2px solid #ffffff;
     border-radius: 12px;">

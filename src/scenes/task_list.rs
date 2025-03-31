@@ -9,35 +9,39 @@ pub fn TaskListScene(
     hardworker_name: RwSignal<String>,
     tasks: RwSignal<Vec<Task>>,
 ) -> impl IntoView {
+    let character = RwSignal::new("smile.png".to_string());
+
     let message = RwSignal::new(format!(
         "{}さんへの依頼が確認できます。依頼が完了したら忘れずに報告してくださいね！",
         hardworker_name.get()
     ));
 
-    fn select_task(message: RwSignal<String>, selected_task: Task) {
+    fn select_task(character: RwSignal<String>, message: RwSignal<String>, selected_task: Task) {
         let new_message = match selected_task.description {
             Some(description) => {
+                character.set("normal.png".to_string());
                 format!("依頼の詳細は..{}ということみたいです！", description)
             }
-            None => format!("依頼の詳細は..無いみたいですね..",),
+            None => {
+                character.set("worry2.png".to_string());
+                format!("依頼の詳細は..無いみたいですね..")
+            }
         };
-        logging::log!("{}", message.get());
         message.set(new_message);
-        logging::log!("{}", message.get());
     }
 
     view! {
 
 
-        <div style="position: fixed; top:0; left:0; right:0; bottom:0; overflow: hidden;">
+        <div class="zentas-main">
 
         // === 背景 ===
         <img src="public/assets/backgrounds/guild_inside.png"
-            style="position: absolute; width: 100%; height: 100%; object-fit: cover;" />
+            class="zentas-bg" />
 
-        // === アリナ（立ち絵） ===
-        <img src="public/assets/characters/smile.png"
-            style="position: absolute; right: 50px; bottom: 0; height: 600px;" />
+        // === 受付嬢（立ち絵） ===
+        <img src={move || format!("public/assets/characters/{}", character.get())}
+            class="zentas-person" />
         // === セリフウィンドウ ===
         <WindowMessage message={ message }/>
 
@@ -50,11 +54,11 @@ pub fn TaskListScene(
                     key=|task| task.clone() // task自体がキー
                     children=move |task| view! {
                     <div class="task-item"
-                    on:click=move |_| select_task(message, task.clone())
+                    on:click=move |_| select_task(character, message, task.clone())
                     >
                         <div>{task.title.clone()}</div>
                         <div>{task.due_date.clone().unwrap_or("締切未定".into())}</div>
-                        
+
                     </div>
                     }
                 />
