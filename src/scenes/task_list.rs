@@ -64,6 +64,8 @@ pub fn TaskListScene(
                     children=move |task| {
                         let task_select = task.clone();
                         let task_delete = task.clone();
+                        let task_complete = task.clone();
+
                         view! {
                             <div class="task-item"
                             on:click=move |_| select_task(character, message, task_select.clone())
@@ -72,7 +74,7 @@ pub fn TaskListScene(
                                 <div>{task.title.clone()}</div>
                                 <div>{task.due_date.clone().unwrap_or("締切未定".into())}</div>
                                 </div>
-                                <button class="task-complete"
+                                <button class="task-delete"
                                 on:click=move |_| {
                                     tasks.update(|opt| {
                                         if let Some(list) = opt {
@@ -89,7 +91,30 @@ pub fn TaskListScene(
                                             logging::log!("タスク完了で削除 & 保存しました");
                                         }
                                     });
-                                    message.set(format!("「{}」の依頼を完了しましたね！おめでとうございます！", task.title));
+                                    message.set(format!("「{}」の依頼をやらないんですね...わかりました。", task_delete.title));
+                                    character.set("delete.png".to_string());
+                                }
+                            >
+                                "依頼削除"
+                            </button>
+                            <button class="task-complete"
+                                on:click=move |_| {
+                                    tasks.update(|opt| {
+                                        if let Some(list) = opt {
+                                            list.retain(|t| t != &task_complete);
+                                        }
+                                    });
+                                    spawn_local({
+                                        let tasks = tasks.clone();
+                                        async move {
+                                            let args = serde_wasm_bindgen::to_value(&serde_json::json!({
+                                                "tasks": tasks.get().clone().unwrap_or(vec![])
+                                            })).unwrap();
+                                            let _ = invoke("save_tasks", args).await;
+                                            logging::log!("タスク完了で削除 & 保存しました");
+                                        }
+                                    });
+                                    message.set(format!("「{}」の依頼を完了しましたね！おめでとうございます！", task_complete.title));
                                     character.set("congrats.png".to_string());
                                 }
                             >

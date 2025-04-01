@@ -20,7 +20,7 @@ pub fn TaskRegisterScene(
     tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
     let message = RwSignal::new(format!(
-        "{}さん、依頼の新規登録はこちらで記載してくださいね！",
+        "{}さん、依頼の内容を教えてください。私のほうで依頼書を書きますので。",
         hardworker.get().unwrap().name
     ));
 

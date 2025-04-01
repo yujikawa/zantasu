@@ -17,7 +17,7 @@ pub fn GuildScene(
 
     let welcome_message = if task_count.get() == 0 {
         format!(
-            "{}さん、ようこそ残業ギルドへ！上部のメニューからやりたいことを選択してね。",
+            "{}さん、ようこそ残業ギルドへ！今は依頼が１件もないみたいですね。追加したい場合はメニューから依頼登録してくださいね。",
             hardworker.get().unwrap().name
         )
     } else {
