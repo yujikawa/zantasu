@@ -1,19 +1,20 @@
 use crate::app::Scene;
 use crate::components::window_message::WindowMessage;
+use crate::models::hard_worker::HardWorker;
 use crate::models::task::Task;
 use leptos::{logging, prelude::*};
 
 #[component]
 pub fn TaskListScene(
     scene: RwSignal<Scene>,
-    hardworker_name: RwSignal<String>,
-    tasks: RwSignal<Vec<Task>>,
+    hardworker: RwSignal<Option<HardWorker>>,
+    tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
     let character = RwSignal::new("smile.png".to_string());
 
     let message = RwSignal::new(format!(
         "{}さんへの依頼が確認できます。依頼が完了したら忘れずに報告してくださいね！",
-        hardworker_name.get()
+        hardworker.get().unwrap().name
     ));
 
     fn select_task(character: RwSignal<String>, message: RwSignal<String>, selected_task: Task) {
@@ -50,7 +51,7 @@ pub fn TaskListScene(
             <div class="task-list-title">"依頼一覧"</div>
             <div class="task-list-scroll">
                 <For
-                    each=move || tasks.get()
+                    each=move || tasks.get().unwrap()
                     key=|task| task.clone() // task自体がキー
                     children=move |task| view! {
                     <div class="task-item"

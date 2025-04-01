@@ -1,10 +1,39 @@
 use leptos::prelude::*;
+use leptos::task::{self, spawn_local};
+use wasm_bindgen::prelude::*;
 
-use crate::app::Scene;
 use crate::components::window_message::WindowMessage;
+use crate::{app::Scene, models::hard_worker::HardWorker};
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"])]
+    async fn invoke(cmd: &str, args: JsValue) -> JsValue;
+}
+
+fn register(
+    name: RwSignal<String>,
+    scene: RwSignal<Scene>,
+    hardworker: RwSignal<Option<HardWorker>>,
+) {
+    spawn_local(async move {
+        let args = serde_wasm_bindgen::to_value(&serde_json::json!({
+            "name": name.get()
+        }))
+        .unwrap();
+        let hw = HardWorker::new(name.get());
+        let _ = invoke("save_hardworker", args).await;
+        leptos::logging::log!("登録しました");
+        hardworker.set(Some(hw));
+        scene.set(Scene::Guild);
+    });
+}
 
 #[component]
-pub fn RegisterScene(scene: RwSignal<Scene>) -> impl IntoView {
+pub fn RegisterScene(
+    scene: RwSignal<Scene>,
+    hardworker: RwSignal<Option<HardWorker>>,
+) -> impl IntoView {
     let message = RwSignal::new(
         "初めての方ですね？まずはハードワーカー登録が必要なのでこちらに名前を記入してください。お手元の魔道具、打鍵石で入力できますよ"
             .to_string(),
@@ -34,7 +63,7 @@ pub fn RegisterScene(scene: RwSignal<Scene>) -> impl IntoView {
                 prop:value=name.get()
             />
 
-                <button style="background:rgba(90, 116, 220, 0.7);margin-left:10px;" on:click=move |_| scene.set(Scene::Guild)
+                <button style="background:rgba(90, 116, 220, 0.7);margin-left:10px;" on:click=move |_| register(name, scene, hardworker)
             >"登録"</button>
 
             </div>

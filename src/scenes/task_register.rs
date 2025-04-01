@@ -1,18 +1,29 @@
 use crate::app::Scene;
 use crate::components::window_message::WindowMessage;
+use crate::models::hard_worker::HardWorker;
 use crate::models::task::Task;
 use leptos::prelude::*;
+use leptos::task::{self, spawn_local};
+
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"])]
+    async fn invoke(cmd: &str, args: JsValue) -> JsValue;
+}
 
 #[component]
 pub fn TaskRegisterScene(
     scene: RwSignal<Scene>,
-    hardworker_name: RwSignal<String>,
-    tasks: RwSignal<Vec<Task>>,
+    hardworker: RwSignal<Option<HardWorker>>,
+    tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
     let message = RwSignal::new(format!(
         "{}さん、依頼の新規登録はこちらで記載してくださいね！",
-        hardworker_name.get()
+        hardworker.get().unwrap().name
     ));
+
     let title = RwSignal::new(String::new());
     let description = RwSignal::new(String::new());
     let due_date = RwSignal::new(String::new());
@@ -46,10 +57,23 @@ pub fn TaskRegisterScene(
             },
         };
         // タスクの新規登録
-        tasks.update(|list| list.push(new_task));
+        tasks.update(|opt| {
+            if let Some(list) = opt {
+                list.push(new_task);
+            }
+        });
+        spawn_local(async move {
+            if let Some(ts) = tasks.get() {
+                let args = serde_wasm_bindgen::to_value(&serde_json::json!({
+                    "tasks": ts
+                }))
+                .unwrap();
+                let _ = invoke("save_tasks", args).await;
+            }
+        });
+
         message.set(format!("「{}」を登録しました！", title.get()));
 
-        // on_submit.run(task);
         // 入力リセット
         title.set("".to_string());
         description.set("".to_string());

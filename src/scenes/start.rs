@@ -1,9 +1,13 @@
 use leptos::prelude::*;
 
 use crate::app::Scene;
+use crate::models::hard_worker::HardWorker;
 
 #[component]
-pub fn StartScene(scene: RwSignal<Scene>, hardworker_name: RwSignal<String>) -> impl IntoView {
+pub fn StartScene(
+    scene: RwSignal<Scene>,
+    hardworker: RwSignal<Option<HardWorker>>,
+) -> impl IntoView {
     view! {
         <div class="zentas-main">
             // === 背景 ===
@@ -25,7 +29,7 @@ pub fn StartScene(scene: RwSignal<Scene>, hardworker_name: RwSignal<String>) -> 
                 font-size: 24px;
                 border-radius: 8px;
             "
-            on:click=move |_| if hardworker_name.get()== "" { scene.set(Scene::Register) } else {scene.set(Scene::Guild)}
+            on:click=move |_| if hardworker.get().unwrap().name.is_empty() { scene.set(Scene::Register) } else {scene.set(Scene::Guild)}
             >
             "業務スタート"
             </button>

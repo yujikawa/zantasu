@@ -1,6 +1,7 @@
 use crate::app::Scene;
 use crate::components::menu_bar::MenuBarComponent;
 use crate::components::window_message::WindowMessage;
+use crate::models::hard_worker::HardWorker;
 use crate::models::task::Task;
 
 use leptos::prelude::*;
@@ -8,21 +9,21 @@ use leptos::prelude::*;
 #[component]
 pub fn GuildScene(
     scene: RwSignal<Scene>,
-    hardworker_name: RwSignal<String>,
-    tasks: RwSignal<Vec<Task>>,
+    hardworker: RwSignal<Option<HardWorker>>,
+    tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
     let receptionist = RwSignal::new("normal_stand.png".to_string());
-    let task_count = RwSignal::new(tasks.get().len());
+    let task_count = RwSignal::new(tasks.get().unwrap().len());
 
     let welcome_message = if task_count.get() == 0 {
         format!(
             "{}さん、ようこそ残業ギルドへ！上部のメニューからやりたいことを選択してね。",
-            hardworker_name.get()
+            hardworker.get().unwrap().name
         )
     } else {
         format!(
             "{}さん、受注している依頼が{}件あるみたいね...しっかり終わらせて報告してくださいね",
-            hardworker_name.get(),
+            hardworker.get().unwrap().name,
             task_count.get(),
         )
     };
