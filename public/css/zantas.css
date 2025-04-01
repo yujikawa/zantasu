@@ -10,6 +10,9 @@
 
 .zentas-bg {
     position: absolute;
+
+    /* animation: fade-in 1s;
+    animation-fill-mode: forwards; */
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -20,6 +23,18 @@
     right: 50px;
     bottom: 0;
     height: 600px;
+    animation: fade-in 1s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* メッセージウィンドウ */
@@ -32,6 +47,8 @@
     max-width: 800px;
     font-family: "serif", sans-serif;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    animation: fade-in 1s;
+    animation-fill-mode: forwards;
 }
 
 .name-box {

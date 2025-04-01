@@ -32,15 +32,13 @@ pub fn GuildScene(
     view! {
         <main>
 
-        <div style="position: fixed; top:0; left:0; right:0; bottom:0; overflow: hidden;">
+        <div class="zentas-main">
         <MenuBarComponent scene=scene/>
 
                 // === 背景 ===
-                <img src="public/assets/backgrounds/guild_inside.png"
-                    style="position: absolute; width: 100%; height: 100%; object-fit: cover;" />
+                <img src="public/assets/backgrounds/guild_inside.png" class="zentas-bg" />
 
                 // === 掲示板 ===
-
                 <Show
                 when=move || task_count.get() !=0
                 fallback=|| ()>
@@ -64,7 +62,7 @@ pub fn GuildScene(
 
                 // === 受付嬢（立ち絵） ===
                 <img src={move || format!("public/assets/characters/{}", receptionist.get())}
-                    style="position: absolute; right: 50px; bottom: 0; height: 600px;" />
+                class="zentas-person" />
         // === セリフウィンドウ ===
         <WindowMessage message={ message }/>
 
