@@ -2,7 +2,15 @@ use crate::app::Scene;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
 use crate::models::task::Task;
+use leptos::task::{self, spawn_local};
 use leptos::{logging, prelude::*};
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"])]
+    async fn invoke(cmd: &str, args: JsValue) -> JsValue;
+}
 
 #[component]
 pub fn TaskListScene(
@@ -53,15 +61,44 @@ pub fn TaskListScene(
                 <For
                     each=move || tasks.get().unwrap()
                     key=|task| task.clone() // task自体がキー
-                    children=move |task| view! {
-                    <div class="task-item"
-                    on:click=move |_| select_task(character, message, task.clone())
-                    >
-                        <div>{task.title.clone()}</div>
-                        <div>{task.due_date.clone().unwrap_or("締切未定".into())}</div>
+                    children=move |task| {
+                        let task_select = task.clone();
+                        let task_delete = task.clone();
+                        view! {
+                            <div class="task-item"
+                            on:click=move |_| select_task(character, message, task_select.clone())
+                            >
+                                <div class="task-item-basic">
+                                <div>{task.title.clone()}</div>
+                                <div>{task.due_date.clone().unwrap_or("締切未定".into())}</div>
+                                </div>
+                                <button class="task-complete"
+                                on:click=move |_| {
+                                    tasks.update(|opt| {
+                                        if let Some(list) = opt {
+                                            list.retain(|t| t != &task_delete);
+                                        }
+                                    });
+                                    spawn_local({
+                                        let tasks = tasks.clone();
+                                        async move {
+                                            let args = serde_wasm_bindgen::to_value(&serde_json::json!({
+                                                "tasks": tasks.get().clone().unwrap_or(vec![])
+                                            })).unwrap();
+                                            let _ = invoke("save_tasks", args).await;
+                                            logging::log!("タスク完了で削除 & 保存しました");
+                                        }
+                                    });
+                                    message.set(format!("「{}」の依頼を完了しましたね！おめでとうございます！", task.title));
+                                    character.set("congrats.png".to_string());
+                                }
+                            >
+                                "達成報告"
+                            </button>
 
-                    </div>
+                            </div>
                     }
+                }
                 />
             </div>
         </div>

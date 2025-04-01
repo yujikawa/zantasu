@@ -87,6 +87,9 @@
 }
 
 .task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 6px;
     margin-bottom: 4px;
     background: rgba(255, 255, 255, 0.1);
@@ -96,9 +99,20 @@
     transition: background 0.2s;
 }
 
+.task-item-basic {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
 .task-item:hover {
     background: rgba(255, 255, 255, 0.2);
 }
+
+.task-complete {
+    background: rgba(30, 224, 72, 0.2);
+}
+
 
 /* タスク登録フォーム */
 .task-form {
