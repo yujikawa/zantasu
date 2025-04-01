@@ -112,12 +112,16 @@
 .task-complete {
     font-size: 12px;
     background: rgba(30, 224, 72, 0.2);
+    margin-left: 10px;
 }
 
 .task-delete {
     font-size: 12px;
     background: rgba(220, 90, 90, 0.7);
+    margin-left: 10px;
 }
+
+.task-operation-buttons {}
 
 
 /* タスク登録フォーム */

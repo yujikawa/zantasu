@@ -116,6 +116,7 @@ pub fn TaskRegisterScene(
                 <div class="task-form-input">
                     <label>"締切日（任意）"</label>
                     <input
+                    type="date"
                     node_ref=due_date_ref
 
                     placeholder="例: 2025-05-01" on:input=move |e| due_date.set(event_target_value(&e)) />

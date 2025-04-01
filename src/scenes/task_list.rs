@@ -18,7 +18,7 @@ pub fn TaskListScene(
     hardworker: RwSignal<Option<HardWorker>>,
     tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
-    let character = RwSignal::new("smile.png".to_string());
+    let character = RwSignal::new("happy2.png".to_string());
 
     let message = RwSignal::new(format!(
         "{}さんへの依頼が確認できます。依頼が完了したら忘れずに報告してくださいね！",
@@ -74,6 +74,7 @@ pub fn TaskListScene(
                                 <div>{task.title.clone()}</div>
                                 <div>{task.due_date.clone().unwrap_or("締切未定".into())}</div>
                                 </div>
+                                <div class="task-operation-buttons">
                                 <button class="task-delete"
                                 on:click=move |_| {
                                     tasks.update(|opt| {
@@ -120,6 +121,7 @@ pub fn TaskListScene(
                             >
                                 "達成報告"
                             </button>
+                            </div>
 
                             </div>
                     }
