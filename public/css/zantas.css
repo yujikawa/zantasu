@@ -1,6 +1,6 @@
 /* 共通 */
 button {
-    -webkit-app-region: no-drag; 
+    -webkit-app-region: no-drag;
 }
 
 .zentas-main {
@@ -55,12 +55,16 @@ button {
 /* スタート画面 */
 .start-menu {
     position: absolute;
-    bottom: 50px;               /* 画面の下から50px */
+    bottom: 50px;
+    /* 画面の下から50px */
     left: 50%;
-    transform: translateX(-50%); /* 中央寄せ */
+    transform: translateX(-50%);
+    /* 中央寄せ */
     display: flex;
-    flex-direction: column;     /* 縦に並べる */
-    gap: 15px;                  /* ボタン間の余白 */
+    flex-direction: column;
+    /* 縦に並べる */
+    gap: 15px;
+    /* ボタン間の余白 */
     align-items: center;
 }
 
@@ -69,8 +73,10 @@ button {
     width: 200px;
     padding: 12px;
     margin: 10px;
-    background: rgba(0, 0, 0, 0.6); /* 半透明黒 */
-    border: 2px solid #88f;          /* 魔法っぽい淡い青 */
+    background: rgba(0, 0, 0, 0.6);
+    /* 半透明黒 */
+    border: 2px solid #88f;
+    /* 魔法っぽい淡い青 */
     border-radius: 12px;
     color: #fff;
     font-family: 'serif';
@@ -323,13 +329,13 @@ button {
     width: 400px;
     height: 400px;
     padding: 20px;
-    background: rgba(0, 0, 50, 0.3);
+    background: rgba(0, 0, 50, 0.7);
     border: 2px solid #88f;
     border-radius: 12px;
     box-shadow: 0 0 20px #88f;
     color: #fff;
     font-family: 'serif';
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(1px);
     z-index: 90;
 }
 
@@ -355,4 +361,49 @@ button {
 .status-item p {
     text-align: center;
     font-size: 18px;
+}
+
+.thought-bubble {
+    position: absolute;
+    bottom: 600px;
+    left: 150px;
+    transform: translateX(-50%);
+    max-width: 250px;
+    padding: 12px 18px;
+    background: rgba(255, 255, 255, 0.8);
+    /* 白くて少し透ける */
+    color: #333;
+    border: 2px dotted #aaa;
+    /* グレー系点線 */
+    border-radius: 25px;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    font-family: 'serif';
+    font-size: 16px;
+    text-align: center;
+}
+
+/* 1個目（大きめ） */
+.thought-bubble::after {
+    content: "";
+    position: absolute;
+    bottom: -15px;
+    right: 30px;
+    width: 10px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px dotted #aaa;
+    border-radius: 50%;
+}
+
+/* 2個目（小さめ） */
+.thought-bubble::before {
+    content: "";
+    position: absolute;
+    bottom: -30px;
+    right: 15px;
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px dotted #aaa;
+    border-radius: 50%;
 }

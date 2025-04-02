@@ -1,9 +1,10 @@
 use crate::app::Scene;
+use crate::components::board::BoardComponent;
 use crate::components::menu_bar::MenuBarComponent;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
+use crate::models::message::Message;
 use crate::models::task::Task;
-use crate::components::board::BoardComponent;
 use leptos::prelude::*;
 
 #[component]
@@ -27,7 +28,7 @@ pub fn GuildScene(
             task_count.get(),
         )
     };
-    let message = RwSignal::new(welcome_message);
+    let message = RwSignal::new(Message::new("レーナ".to_string(), welcome_message));
 
     view! {
         <main>

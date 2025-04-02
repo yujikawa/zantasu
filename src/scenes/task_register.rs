@@ -1,6 +1,7 @@
 use crate::app::Scene;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
+use crate::models::message::Message;
 use crate::models::task::Task;
 use leptos::prelude::*;
 use leptos::task::{self, spawn_local};
@@ -19,9 +20,12 @@ pub fn TaskRegisterScene(
     hardworker: RwSignal<Option<HardWorker>>,
     tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
-    let message = RwSignal::new(format!(
-        "{}さん、依頼の内容を教えてください。私のほうで依頼書を書きますので。",
-        hardworker.get().unwrap().name
+    let message = RwSignal::new(Message::new(
+        "レーナ".to_string(),
+        format!(
+            "{}さん、依頼の内容を教えてください。私のほうで依頼書を書きますので。",
+            hardworker.get().unwrap().name
+        ),
     ));
     let task_count = RwSignal::new(tasks.get().unwrap().len());
 
@@ -73,7 +77,10 @@ pub fn TaskRegisterScene(
             }
         });
 
-        message.set(format!("「{}」を登録しました！", title.get()));
+        message.set(Message::new(
+            "レーナ".to_string(),
+            format!("「{}」を登録しました！", title.get()),
+        ));
 
         // 入力リセット
         title.set("".to_string());

@@ -2,6 +2,7 @@ use crate::app::Scene;
 use crate::components::board::BoardComponent;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
+use crate::models::message::Message;
 use crate::models::task::Task;
 use leptos::task::{self, spawn_local};
 use leptos::{logging, prelude::*};
@@ -22,13 +23,16 @@ pub fn TaskListScene(
     let character = RwSignal::new("rena/watching.png".to_string());
     let task_count = RwSignal::new(tasks.get().unwrap().len());
 
-    let message = RwSignal::new(format!(
-        "{}さんへの依頼が確認できます。依頼が完了したら忘れずに報告してくださいね！",
-        hardworker.get().unwrap().name
+    let message = RwSignal::new(Message::new(
+        "レーナ".to_string(),
+        format!(
+            "{}さんへの依頼が確認できます。依頼が完了したら忘れずに報告してくださいね！",
+            hardworker.get().unwrap().name
+        ),
     ));
 
-    fn select_task(character: RwSignal<String>, message: RwSignal<String>, selected_task: Task) {
-        let new_message = match selected_task.description {
+    fn select_task(character: RwSignal<String>, message: RwSignal<Message>, selected_task: Task) {
+        let new_text = match selected_task.description {
             Some(description) => {
                 character.set("rena/explain_task.png".to_string());
                 format!("依頼の詳細は..{}ということみたいです！", description)
@@ -38,6 +42,9 @@ pub fn TaskListScene(
                 format!("依頼の詳細は..無いみたいですね..")
             }
         };
+
+        let new_message = Message::new("レーナ".to_string(), new_text);
+
         message.set(new_message);
     }
 
@@ -98,7 +105,9 @@ pub fn TaskListScene(
                                             logging::log!("タスク完了で削除 & 保存しました");
                                         }
                                     });
-                                    message.set(format!("「{}」の依頼をやらないんですね...わかりました。", task_delete.title));
+                                    message.set(
+                                        Message::new("レーナ".to_string(),  format!("「{}」の依頼をやらないんですね...わかりました。", task_delete.title)
+                                    ));
                                     character.set("rena/delete.png".to_string());
                                 }
                             >
@@ -121,7 +130,9 @@ pub fn TaskListScene(
                                             logging::log!("タスク完了で削除 & 保存しました");
                                         }
                                     });
-                                    message.set(format!("「{}」の依頼を完了しましたね！おめでとうございます！", task_complete.title));
+                                    message.set(
+                                        Message::new("レーナ".to_string(),  format!("「{}」の依頼を完了しましたね！おめでとうございます！", task_complete.title)
+                                    ));
                                     character.set("rena/congrats.png".to_string());
                                 }
                             >

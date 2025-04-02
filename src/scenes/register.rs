@@ -3,6 +3,7 @@ use leptos::task::{self, spawn_local};
 use wasm_bindgen::prelude::*;
 
 use crate::components::window_message::WindowMessage;
+use crate::models::message::Message;
 use crate::{app::Scene, models::hard_worker::HardWorker};
 
 #[wasm_bindgen]
@@ -35,8 +36,8 @@ pub fn RegisterScene(
     hardworker: RwSignal<Option<HardWorker>>,
 ) -> impl IntoView {
     let message = RwSignal::new(
-        "初めての方ですね？まずはハードワーカー登録が必要なのでこちらに名前を記入してください。お手元の魔道具、打鍵石で入力できますよ"
-            .to_string(),
+        Message::new("レーナ".to_string(), "初めての方ですね？まずはハードワーカー登録が必要なのでこちらに名前を記入してください。お手元の魔道具、打鍵石で入力できますよ。登録後はFランクからのスタートとなります。タスクをこなせばランクがあがりますので頑張ってくださいね！"
+            .to_string())
     );
     let name = RwSignal::new("".to_string());
 

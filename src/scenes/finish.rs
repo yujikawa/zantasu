@@ -2,10 +2,14 @@ use leptos::prelude::*;
 
 use crate::app::Scene;
 use crate::components::window_message::WindowMessage;
+use crate::models::message::Message;
 
 #[component]
 pub fn FinishScene(scene: RwSignal<Scene>) -> impl IntoView {
-    let message = RwSignal::new("今日もお疲れさまでした！".to_string());
+    let message = RwSignal::new(Message::new(
+        "レーナ".to_string(),
+        "今日もお疲れさまでした！".to_string(),
+    ));
 
     view! {
 
@@ -17,7 +21,7 @@ pub fn FinishScene(scene: RwSignal<Scene>) -> impl IntoView {
                 <img src="public/assets/characters/rena/bye.png"
                     class="zentas-person" />
 
-            <WindowMessage message=message/>
+            <WindowMessage message=message />
 
 
             <button

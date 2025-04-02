@@ -4,6 +4,7 @@ use crate::components::menu_bar::MenuBarComponent;
 
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
+use crate::models::message::Message;
 use crate::models::task::Task;
 
 use leptos::prelude::*;
@@ -15,7 +16,10 @@ pub fn StatusScene(
     tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
     let task_count = RwSignal::new(tasks.get().unwrap().len());
-    let message = RwSignal::new("（何を見ているんだろう...）".to_string());
+    let message = RwSignal::new(Message::new(
+        hardworker.get().unwrap().name,
+        "ステータスオープン！".to_string(),
+    ));
     view! {
         <main>
 
@@ -37,19 +41,19 @@ pub fn StatusScene(
             </div>
 
             <div class="status-item">
-                <label>ランク</label>
+                <label>労働等級</label>
                 <p>{hardworker.get().unwrap().rank} ランク</p>
             </div>
 
-            // <div class="status-item">
-            //     <label>職業</label>
-            //     <p>{hardworker.get().unwrap().job}</p>
-            // </div>
+            <div class="status-item">
+                <label>職業</label>
+                <p>"社畜"</p>
+            </div>
 
-            // <div class="status-item">
-            //     <label>冒険者ランク</label>
-            //     <p>{hardworker.get().unwrap().adventurer_rank}</p>
-            // </div>
+            <div class="status-item">
+                <label>現在の依頼受注数</label>
+                <p>{task_count.get()}</p>
+            </div>
 
             // <div class="status-item">
             //     <label>依頼達成数</label>
@@ -58,17 +62,23 @@ pub fn StatusScene(
         </div>
 
 
-            // === ステータス ===
-            <img src="public/assets/characters/status_open.png"
-            class="status-open" />
 
-            <img src="public/assets/characters/rena/curious.png"
-             class="zentas-left-person"/>
+        <img src="public/assets/characters/status_open.png"
+        class="status-open" />
 
-            // === セリフウィンドウ ===
-            <WindowMessage message={message}/>
+        <div class="thought-bubble">
+            "何をみているんだろう..?"
+        </div>
+
+        <img src="public/assets/characters/rena/curious.png"
+            class="zentas-left-person"/>
+        // === セリフウィンドウ ===
+        <WindowMessage message={message}/>
 
     </div>
+
+
+
 
     </main>
     }

@@ -1,5 +1,4 @@
 mod commands;
-use commands::load_hardworker;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
