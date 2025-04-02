@@ -14,7 +14,7 @@ pub fn FinishScene(scene: RwSignal<Scene>) -> impl IntoView {
             <img src="public/assets/backgrounds/guild_outside2.png"
                 class="zentas-bg" />
 
-                <img src="public/assets/characters/byebye_off.png"
+                <img src="public/assets/characters/rena/bye.png"
                     class="zentas-person" />
 
             <WindowMessage message=message/>

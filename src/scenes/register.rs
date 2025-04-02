@@ -46,7 +46,7 @@ pub fn RegisterScene(
             <img src="public/assets/backgrounds/guild_day.png"
                 class="zentas-bg" />
 
-            <img src="public/assets/characters/register.png"
+            <img src="public/assets/characters/rena/register.png"
                 class="zentas-person" />
 
             <div style="position: absolute; top:200px; left:50px; padding:10px; width:400px; height:200px; background:rgba(31, 29, 29, 0.7);  border: 2px solid #ffffff;

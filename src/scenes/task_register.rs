@@ -23,6 +23,7 @@ pub fn TaskRegisterScene(
         "{}さん、依頼の内容を教えてください。私のほうで依頼書を書きますので。",
         hardworker.get().unwrap().name
     ));
+    let task_count = RwSignal::new(tasks.get().unwrap().len());
 
     let title = RwSignal::new(String::new());
     let description = RwSignal::new(String::new());
@@ -88,8 +89,29 @@ pub fn TaskRegisterScene(
         <img src="public/assets/backgrounds/guild_inside.png"
             class="zentas-bg" />
 
+            // === 掲示板 ===
+            <Show
+            when=move || task_count.get() !=0
+            fallback=|| ()>
+
+            <img src="public/assets/objects/board_with_paper.png"
+                style="position: absolute; left: 50px; top: 140px; width: 500px;"
+                />
+
+            </Show>
+
+            <Show
+            when=move || task_count.get() == 0
+            fallback=|| ()>
+
+            <img src="public/assets/objects/board.png"
+                style="position: absolute; left: 50px; top: 140px; width: 500px;"
+                />
+
+            </Show>
+
         // === 受付嬢（立ち絵） ===
-        <img src="public/assets/characters/memo.png"
+        <img src="public/assets/characters/rena/hearing.png"
             class="zentas-person" />
         // === セリフウィンドウ ===
         <WindowMessage message={ message }/>
