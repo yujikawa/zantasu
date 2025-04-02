@@ -15,7 +15,7 @@ pub fn StatusScene(
     tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
     let task_count = RwSignal::new(tasks.get().unwrap().len());
-
+    let message = RwSignal::new("（何を見ているんだろう...）".to_string());
     view! {
         <main>
 
@@ -30,33 +30,33 @@ pub fn StatusScene(
 
             <div class="status-window">
             <div class="status-list">"【 ステータス一覧 】"</div>
-            
+
             <div class="status-item">
                 <label>名前</label>
                 <p>{hardworker.get().unwrap().name}</p>
             </div>
-            
+
             <div class="status-item">
                 <label>ランク</label>
                 <p>{hardworker.get().unwrap().rank} ランク</p>
             </div>
-            
+
             // <div class="status-item">
             //     <label>職業</label>
             //     <p>{hardworker.get().unwrap().job}</p>
             // </div>
-            
+
             // <div class="status-item">
             //     <label>冒険者ランク</label>
             //     <p>{hardworker.get().unwrap().adventurer_rank}</p>
             // </div>
-            
+
             // <div class="status-item">
             //     <label>依頼達成数</label>
             //     <p>{hardworker.get().unwrap().quest_completed} 件</p>
             // </div>
         </div>
-        
+
 
             // === ステータス ===
             <img src="public/assets/characters/status_open.png"
@@ -66,7 +66,7 @@ pub fn StatusScene(
              class="zentas-left-person"/>
 
             // === セリフウィンドウ ===
-            // <WindowMessage message={ message }/>
+            <WindowMessage message={message}/>
 
     </div>
 
