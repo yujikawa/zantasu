@@ -1,4 +1,5 @@
 use crate::app::Scene;
+use crate::components::menu_bar::MenuBarComponent;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
 use crate::models::message::Message;
@@ -91,6 +92,7 @@ pub fn TaskRegisterScene(
     view! {
 
         <div class="zentas-main">
+        <MenuBarComponent scene=scene/>
 
         // === 背景 ===
         <img src="public/assets/backgrounds/guild_inside.png"
@@ -153,7 +155,7 @@ pub fn TaskRegisterScene(
             </div>
 
             <div style="margin-top: 20px;">
-                <button style="background:rgba(220, 90, 90, 0.7);" on:click=move |_| scene.set(Scene::Guild)>"閉じる"</button>
+                // <button style="background:rgba(220, 90, 90, 0.7);" on:click=move |_| scene.set(Scene::Guild)>"閉じる"</button>
                 <button style="background:rgba(90, 116, 220, 0.7);margin-left:10px;" on:click=submit_task>"登録"</button>
             </div>
         </div>

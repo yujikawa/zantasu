@@ -1,5 +1,6 @@
 use crate::app::Scene;
 use crate::components::board::BoardComponent;
+use crate::components::menu_bar::MenuBarComponent;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
 use crate::models::message::Message;
@@ -52,6 +53,7 @@ pub fn TaskListScene(
 
 
         <div class="zentas-main">
+        <MenuBarComponent scene=scene/>
 
         // === 背景 ===
         <img src="public/assets/backgrounds/guild_inside.png"
@@ -146,20 +148,6 @@ pub fn TaskListScene(
                 />
             </div>
         </div>
-        <button
-        style="
-            position: absolute; 
-            right: 10px;
-            top: 10px;
-            transform: translateX(-50%);
-            padding: 16px 32px;
-            font-size: 24px;
-            border-radius: 8px;
-            background:rgba(220, 90, 90, 0.7);
-        "
-        on:click=move |_| scene.set(Scene::Guild)
-        >
-        "戻る"
-        </button>
+
     }
 }

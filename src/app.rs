@@ -92,7 +92,7 @@ pub fn App() -> impl IntoView {
                 <Show
                 when=move || scene.get() == Scene::Finish
                 fallback=|| ()>
-                    <FinishScene scene=scene/>
+                    <FinishScene scene=scene hardworker=hardworker/>
                 </Show>
 
                 <Show

@@ -2,13 +2,20 @@ use leptos::prelude::*;
 
 use crate::app::Scene;
 use crate::components::window_message::WindowMessage;
+use crate::models::hard_worker::HardWorker;
 use crate::models::message::Message;
 
 #[component]
-pub fn FinishScene(scene: RwSignal<Scene>) -> impl IntoView {
+pub fn FinishScene(
+    scene: RwSignal<Scene>,
+    hardworker: RwSignal<Option<HardWorker>>,
+) -> impl IntoView {
     let message = RwSignal::new(Message::new(
         "レーナ".to_string(),
-        "今日もお疲れさまでした！".to_string(),
+        format!(
+            "{}さん、今日もお疲れさまでした！またお仕事がんばってください！",
+            hardworker.get().unwrap().name
+        ),
     ));
 
     view! {
