@@ -6,6 +6,7 @@ use crate::scenes::register::RegisterScene;
 use crate::scenes::start::StartScene;
 use crate::scenes::task_list::TaskListScene;
 use crate::scenes::task_register::TaskRegisterScene;
+use crate::scenes::status::StatusScene;
 
 use leptos::task::{self, spawn_local};
 use leptos::{logging, prelude::*};
@@ -26,6 +27,7 @@ pub enum Scene {
     Finish,
     TaskRegister,
     TaskList,
+    Status,
 }
 
 #[component]
@@ -103,6 +105,13 @@ pub fn App() -> impl IntoView {
                 when=move || scene.get() == Scene::TaskList
                 fallback=|| ()>
                     <TaskListScene scene=scene hardworker=hardworker tasks=tasks/>
+                </Show>
+
+                
+                <Show
+                when=move || scene.get() == Scene::Status
+                fallback=|| ()>
+                    <StatusScene scene=scene hardworker=hardworker tasks=tasks/>
                 </Show>
         </Show>
 

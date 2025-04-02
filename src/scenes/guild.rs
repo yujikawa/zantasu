@@ -3,7 +3,7 @@ use crate::components::menu_bar::MenuBarComponent;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
 use crate::models::task::Task;
-
+use crate::components::board::BoardComponent;
 use leptos::prelude::*;
 
 #[component]
@@ -39,26 +39,7 @@ pub fn GuildScene(
                 <img src="public/assets/backgrounds/guild_inside.png" class="zentas-bg" />
 
                 // === 掲示板 ===
-                <Show
-                when=move || task_count.get() !=0
-                fallback=|| ()>
-
-                <img src="public/assets/objects/board_with_paper.png"
-                    style="position: absolute; left: 50px; top: 140px; width: 500px;"
-                    />
-
-                </Show>
-
-                <Show
-                when=move || task_count.get() == 0
-                fallback=|| ()>
-
-                <img src="public/assets/objects/board.png"
-                    style="position: absolute; left: 50px; top: 140px; width: 500px;"
-                    />
-
-                </Show>
-
+                <BoardComponent tasks=tasks/>
 
                 // === 受付嬢（立ち絵） ===
                 <img src={move || format!("public/assets/characters/{}", receptionist.get())}
