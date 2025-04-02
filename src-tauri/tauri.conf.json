@@ -16,7 +16,10 @@
         "title": "残業したくないので、タスク管理はじめました。",
         "width": 960,
         "height": 800,
-        "resizable": false
+        "resizable": false,
+        "fullscreen": false,
+        "decorations": false,
+        "transparent": false
       }
     ],
     "security": {

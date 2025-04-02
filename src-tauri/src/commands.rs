@@ -111,3 +111,8 @@ pub fn load_tasks(app: AppHandle) -> Result<Vec<Task>, String> {
 
     Ok(tasks)
 }
+
+#[tauri::command]
+pub fn close_app(app_handle: tauri::AppHandle) {
+    app_handle.exit(0);
+}

@@ -1,7 +1,14 @@
-use leptos::prelude::*;
-
 use crate::app::Scene;
 use crate::models::hard_worker::HardWorker;
+use leptos::prelude::*;
+use leptos::task::{self, spawn_local};
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"])]
+    async fn invoke(cmd: &str, args: JsValue) -> JsValue;
+}
 
 #[component]
 pub fn StartScene(
@@ -25,20 +32,25 @@ pub fn StartScene(
                 style="position: absolute;left: 50px;bottom: 0;height: 500px;" />
 
             // === スタートボタン ===
+            <div class="start-menu">
             <button
-            style="
-                position: absolute; 
-                left: 50%;
-                bottom: 100px;
-                transform: translateX(-50%);
-                padding: 16px 32px;
-                font-size: 24px;
-                border-radius: 8px;
-            "
             on:click=move |_| if hardworker.get().unwrap().name.is_empty() { scene.set(Scene::Register) } else {scene.set(Scene::Guild)}
             >
             "業務スタート"
             </button>
+
+            // === 終了ボタン ===
+            <button
+                on:click=move |_| {
+                    spawn_local(async move {
+                        let _ = invoke("close_app", JsValue::NULL ).await;
+                    });
+                }
+            >
+            "終了する"
+            </button>
+            </div>
+
         </div>
     }
 }

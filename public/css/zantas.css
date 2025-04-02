@@ -1,11 +1,16 @@
 /* 共通 */
+button {
+    -webkit-app-region: no-drag; 
+}
+
 .zentas-main {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    overflow: hidden
+    overflow: hidden;
+    -webkit-app-region: drag;
 }
 
 .zentas-bg {
@@ -45,6 +50,24 @@
     to {
         opacity: 1;
     }
+}
+
+/* スタート画面 */
+.start-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: absolute;
+    left: 50%;
+    bottom: 100px;
+}
+
+.start-menu button {
+    transform: translateX(-50%);
+    padding: 16px 32px;
+    font-size: 24px;
+    border-radius: 8px;
+    margin-top: 10px;
 }
 
 /* メッセージウィンドウ */
@@ -223,6 +246,7 @@
     padding: 0 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     z-index: 1000;
+
 }
 
 .menu-button {
@@ -310,4 +334,3 @@
     text-align: center;
     font-size: 18px;
 }
-
