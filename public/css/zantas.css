@@ -323,11 +323,11 @@ button {
 
 .status-window {
     position: absolute;
-    top: 50%;
+    top: 380px;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 400px;
-    height: 400px;
+    height: 500px;
     padding: 20px;
     background: rgba(0, 0, 50, 0.7);
     border: 2px solid #88f;
@@ -340,7 +340,7 @@ button {
 }
 
 .status-list {
-    font-size: 20px;
+    font-size: 18px;
     margin-bottom: 15px;
     text-align: center;
     text-shadow: 0 0 5px #88f;
@@ -354,13 +354,13 @@ button {
     display: block;
     text-align: left;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 14px;
     margin-bottom: 4px;
 }
 
 .status-item p {
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .thought-bubble {

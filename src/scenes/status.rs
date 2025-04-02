@@ -42,12 +42,12 @@ pub fn StatusScene(
 
             <div class="status-item">
                 <label>労働等級</label>
-                <p>{hardworker.get().unwrap().rank} ランク</p>
+                <p>{hardworker.get().unwrap().rank.to_str()}</p>
             </div>
 
             <div class="status-item">
                 <label>職業</label>
-                <p>"社畜"</p>
+                <p>{hardworker.get().unwrap().job.unwrap().to_str()}</p>
             </div>
 
             <div class="status-item">
@@ -55,10 +55,18 @@ pub fn StatusScene(
                 <p>{task_count.get()}</p>
             </div>
 
-            // <div class="status-item">
-            //     <label>依頼達成数</label>
-            //     <p>{hardworker.get().unwrap().quest_completed} 件</p>
-            // </div>
+            <div class="status-item">
+                <label>依頼達成数</label>
+                <p>{hardworker.get().unwrap().achievement} 件</p>
+            </div>
+
+            <div class="status-item">
+                <label>依頼達成最終日</label>
+                <p>{
+                    hardworker.get().unwrap().last_complete.unwrap_or("実績なし".to_string())
+                } </p>
+            </div>
+
         </div>
 
 

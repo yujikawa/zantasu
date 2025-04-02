@@ -4,9 +4,9 @@ use crate::scenes::finish::FinishScene;
 use crate::scenes::guild::GuildScene;
 use crate::scenes::register::RegisterScene;
 use crate::scenes::start::StartScene;
+use crate::scenes::status::StatusScene;
 use crate::scenes::task_list::TaskListScene;
 use crate::scenes::task_register::TaskRegisterScene;
-use crate::scenes::status::StatusScene;
 
 use leptos::task::{self, spawn_local};
 use leptos::{logging, prelude::*};
@@ -39,11 +39,13 @@ pub fn App() -> impl IntoView {
 
     let hardworker = RwSignal::new(None::<HardWorker>);
     let tasks = RwSignal::new(None::<Vec<Task>>);
-
     spawn_local({
         let hardworker = hardworker.clone();
+        
+        
         async move {
             let result = invoke("load_hardworker", JsValue::NULL).await;
+            logging::log!("{:?}", result);
             if let Ok(hw) = serde_wasm_bindgen::from_value::<HardWorker>(result) {
                 logging::log!("ハードワーカーをLOADしました");
                 hardworker.set(Some(hw));
@@ -107,7 +109,7 @@ pub fn App() -> impl IntoView {
                     <TaskListScene scene=scene hardworker=hardworker tasks=tasks/>
                 </Show>
 
-                
+
                 <Show
                 when=move || scene.get() == Scene::Status
                 fallback=|| ()>
