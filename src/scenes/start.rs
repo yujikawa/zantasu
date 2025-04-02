@@ -33,7 +33,7 @@ pub fn StartScene(
 
             // === スタートボタン ===
             <div class="start-menu">
-            <button
+            <button class="start-button"
             on:click=move |_| if hardworker.get().unwrap().name.is_empty() { scene.set(Scene::Register) } else {scene.set(Scene::Guild)}
             >
             "業務スタート"
@@ -41,6 +41,7 @@ pub fn StartScene(
 
             // === 終了ボタン ===
             <button
+                class="start-button"
                 on:click=move |_| {
                     spawn_local(async move {
                         let _ = invoke("close_app", JsValue::NULL ).await;

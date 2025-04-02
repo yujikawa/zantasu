@@ -54,21 +54,43 @@ button {
 
 /* スタート画面 */
 .start-menu {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     position: absolute;
+    bottom: 50px;               /* 画面の下から50px */
     left: 50%;
-    bottom: 100px;
+    transform: translateX(-50%); /* 中央寄せ */
+    display: flex;
+    flex-direction: column;     /* 縦に並べる */
+    gap: 15px;                  /* ボタン間の余白 */
+    align-items: center;
 }
 
-.start-menu button {
-    transform: translateX(-50%);
-    padding: 16px 32px;
-    font-size: 24px;
-    border-radius: 8px;
-    margin-top: 10px;
+.start-button {
+    display: inline-block;
+    width: 200px;
+    padding: 12px;
+    margin: 10px;
+    background: rgba(0, 0, 0, 0.6); /* 半透明黒 */
+    border: 2px solid #88f;          /* 魔法っぽい淡い青 */
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'serif';
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: inset 0 0 5px rgba(136, 136, 255, 0.5);
 }
+
+.start-button:hover {
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 10px #88f, inset 0 0 10px #88f;
+    transform: scale(1.05);
+}
+
+.start-button:active {
+    transform: scale(0.98);
+    box-shadow: 0 0 5px #88f, inset 0 0 5px #88f;
+}
+
 
 /* メッセージウィンドウ */
 .message-window {
