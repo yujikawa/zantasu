@@ -34,7 +34,7 @@ button {
 
 .zentas-left-person {
     position: absolute;
-    left: 50px;
+    left: -100px;
     bottom: 0;
     height: 600px;
     animation: fade-in 1s;
@@ -400,7 +400,7 @@ button {
     content: "";
     position: absolute;
     bottom: -30px;
-    right: 15px;
+    right: 40px;
     width: 6px;
     height: 6px;
     background: rgba(255, 255, 255, 0.8);
