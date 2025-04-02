@@ -69,7 +69,7 @@ pub fn TaskListScene(
         // === セリフウィンドウ ===
         <WindowMessage message={ message }/>
 
-    </div>
+        // タスク一覧
         <div class="task-list-window">
             <div class="task-list-title">"依頼一覧"</div>
             <div class="task-list-scroll">
@@ -148,6 +148,8 @@ pub fn TaskListScene(
                 />
             </div>
         </div>
+    </div>
+
 
     }
 }
