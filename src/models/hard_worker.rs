@@ -13,30 +13,7 @@ pub enum Rank {
 }
 
 impl Rank {
-    pub fn as_index(&self) -> usize {
-        match self {
-            Rank::F => 0,
-            Rank::E => 1,
-            Rank::D => 2,
-            Rank::C => 3,
-            Rank::B => 4,
-            Rank::A => 5,
-            Rank::S => 6,
-        }
-    }
-
-    pub fn from_index(index: usize) -> Rank {
-        match index {
-            0 => Rank::F,
-            1 => Rank::E,
-            2 => Rank::D,
-            3 => Rank::C,
-            4 => Rank::B,
-            5 => Rank::A,
-            _ => Rank::S,
-        }
-    }
-
+   
     pub fn to_str(&self) -> &'static str {
         match self {
             Rank::F => "F 等級",

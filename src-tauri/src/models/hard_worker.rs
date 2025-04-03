@@ -1,3 +1,4 @@
+use chrono::NaiveDate;
 use rand::seq::IndexedMutRandom;
 use serde::{Deserialize, Serialize};
 
@@ -10,6 +11,32 @@ pub enum Rank {
     B,
     A,
     S,
+}
+
+impl Rank {
+    pub fn as_index(&self) -> usize {
+        match self {
+            Rank::F => 0,
+            Rank::E => 1,
+            Rank::D => 2,
+            Rank::C => 3,
+            Rank::B => 4,
+            Rank::A => 5,
+            Rank::S => 6,
+        }
+    }
+
+    pub fn from_index(index: usize) -> Rank {
+        match index {
+            0 => Rank::F,
+            1 => Rank::E,
+            2 => Rank::D,
+            3 => Rank::C,
+            4 => Rank::B,
+            5 => Rank::A,
+            _ => Rank::S,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
@@ -90,7 +117,7 @@ pub struct HardWorker {
     pub rank: Rank,
     pub job: Job,
     pub achievement: u32,
-    pub last_complete: Option<String>,
+    pub last_complete: Option<NaiveDate>,
 }
 
 impl HardWorker {
@@ -100,7 +127,33 @@ impl HardWorker {
             rank: Rank::F,
             job: Job::random_job(),
             achievement: 0,
-            last_complete: Some("実績なし".to_string()),
+            last_complete: None,
+        }
+    }
+
+    pub fn update_rank(&mut self) {
+        if let Some(last_complete) = self.last_complete {
+            let now = chrono::Local::now().date_naive();
+            let term = now - last_complete;
+            let days = term.num_days().max(0);
+            let rank_down_num = (days / 10) as usize;
+            if rank_down_num > 0 {
+                let current_rank = self.rank.as_index();
+                let update_rank = current_rank.saturating_sub(rank_down_num);
+                let new_rank = Rank::from_index(update_rank);
+                self.rank = new_rank;
+            } else {
+                let new_rank = match self.achievement {
+                    0..10 => Rank::F,
+                    10..20 => Rank::E,
+                    20..30 => Rank::D,
+                    30..40 => Rank::C,
+                    40..50 => Rank::B,
+                    50..60 => Rank::A,
+                    _ => Rank::S,
+                };
+                self.rank = new_rank;
+            }
         }
     }
 }

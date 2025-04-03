@@ -41,8 +41,6 @@ pub fn App() -> impl IntoView {
     let tasks = RwSignal::new(None::<Vec<Task>>);
     spawn_local({
         let hardworker = hardworker.clone();
-        
-        
         async move {
             let result = invoke("get_hardworker", JsValue::NULL).await;
             logging::log!("{:?}", result);

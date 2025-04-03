@@ -52,7 +52,7 @@ pub fn StatusScene(
 
             <div class="status-item">
                 <label>現在の依頼受注数</label>
-                <p>{task_count.get()}</p>
+                <p>{task_count.get()} 件</p>
             </div>
 
             <div class="status-item">
@@ -63,7 +63,11 @@ pub fn StatusScene(
             <div class="status-item">
                 <label>依頼達成最終日</label>
                 <p>{
-                    hardworker.get().unwrap().last_complete
+                    let last_complete = match hardworker.get().unwrap().last_complete {
+                        Some(date) => date,
+                        None => "実績なし".to_string(),
+                    };
+                    last_complete
                 } </p>
             </div>
 
