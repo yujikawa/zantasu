@@ -10,7 +10,8 @@ pub fn run() {
             commands::save_hardworker,
             commands::save_tasks,
             commands::load_tasks,
-            commands::close_app
+            commands::close_app,
+            commands::complete_task,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

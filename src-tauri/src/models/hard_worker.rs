@@ -90,7 +90,7 @@ pub struct HardWorker {
     pub rank: Rank,
     pub job: Job,
     pub achievement: u32,
-    pub last_complete: Option<chrono::DateTime<chrono::Local>>,
+    pub last_complete: Option<String>,
 }
 
 impl HardWorker {

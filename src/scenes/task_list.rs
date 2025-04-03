@@ -128,8 +128,13 @@ pub fn TaskListScene(
                                             let args = serde_wasm_bindgen::to_value(&serde_json::json!({
                                                 "tasks": tasks.get().clone().unwrap_or(vec![])
                                             })).unwrap();
-                                            let _ = invoke("save_tasks", args).await;
+                                            let _ = invoke("complete_task", args).await;
                                             logging::log!("タスク完了で削除 & 保存しました");
+                                            let result = invoke("load_hardworker", JsValue::NULL).await;
+                                            if let Ok(hw) = serde_wasm_bindgen::from_value::<HardWorker>(result) {
+                                                logging::log!("ハードワーカーをLOADしました");
+                                                hardworker.set(Some(hw));
+                                            }
                                         }
                                     });
                                     message.set(

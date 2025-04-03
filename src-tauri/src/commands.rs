@@ -37,17 +37,41 @@ pub fn load_hardworker(app: AppHandle) -> Result<HardWorker, String> {
 }
 
 #[tauri::command]
+pub fn complete_task(app: AppHandle, tasks: Vec<Task>) -> Result<(), String> {
+    // ---------- タスク側更新 ----------
+    save_tasks_to_file(&app, &tasks)?;
+
+    // ---------- ハードワーカー更新 ----------
+    let hw_path = app
+        .path()
+        .resolve("zantas/hardworker.json", BaseDirectory::AppData)
+        .map_err(|e| e.to_string())?;
+
+    let json_hw = std::fs::read_to_string(&hw_path).map_err(|e| e.to_string())?;
+    let mut hw: HardWorker = serde_json::from_str(&json_hw).map_err(|e| e.to_string())?;
+
+    hw.achievement += 1;
+    hw.last_complete = Some(chrono::Local::now().format("%Y-%m-%d").to_string());
+
+    let json_hw = serde_json::to_string_pretty(&hw).map_err(|e| e.to_string())?;
+    std::fs::write(&hw_path, json_hw).map_err(|e| e.to_string())?;
+
+    Ok(())
+}
+
+#[tauri::command]
 pub fn save_tasks(app: AppHandle, tasks: Vec<Task>) -> Result<(), String> {
+    save_tasks_to_file(&app, &tasks)
+}
+
+fn save_tasks_to_file(app: &AppHandle, tasks: &Vec<Task>) -> Result<(), String> {
     let path = app
         .path()
         .resolve("zantas/tasks.json", BaseDirectory::AppData)
         .map_err(|e| e.to_string())?;
-
     std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
-
     let json = serde_json::to_string_pretty(&tasks).map_err(|e| e.to_string())?;
     std::fs::write(&path, json).map_err(|e| e.to_string())?;
-
     Ok(())
 }
 
