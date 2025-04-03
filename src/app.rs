@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use crate::models::hard_worker::HardWorker;
 use crate::models::task::Task;
 use crate::scenes::finish::FinishScene;
@@ -43,9 +45,7 @@ pub fn App() -> impl IntoView {
         let hardworker = hardworker.clone();
         async move {
             let result = invoke("get_hardworker", JsValue::NULL).await;
-            logging::log!("{:?}", result);
             if let Ok(hw) = serde_wasm_bindgen::from_value::<HardWorker>(result) {
-                logging::log!("ハードワーカーをLOADしました");
                 hardworker.set(Some(hw));
             }
         }
@@ -54,12 +54,10 @@ pub fn App() -> impl IntoView {
     spawn_local({
         let tasks = tasks.clone();
         async move {
-            let result = invoke("load_tasks", JsValue::NULL).await;
+            let result = invoke("get_tasks", JsValue::NULL).await;
             if let Ok(loaded) = serde_wasm_bindgen::from_value::<Vec<Task>>(result) {
-                logging::log!("TASKをLOADしました");
                 tasks.set(Some(loaded));
             } else {
-                logging::log!("TASKを空でLOADしました");
                 tasks.set(Some(vec![]));
             }
         }

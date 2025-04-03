@@ -3,6 +3,39 @@ use std::path::PathBuf;
 use crate::models::hard_worker::HardWorker;
 use crate::models::task::Task;
 use tauri::{path::BaseDirectory, AppHandle, Manager};
+use tauri_plugin_notification::NotificationExt;
+
+#[tauri::command]
+pub fn notify(app: AppHandle, title: String, message: String) -> Result<(), String> {
+    notify_message(app, title, message)?;
+    Ok(())
+}
+
+fn notify_message(app: AppHandle, title: String, message: String) -> Result<(), String> {
+    let _ = app
+        .notification()
+        .builder()
+        .title(&title)
+        .body(&message)
+        .show()
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
+#[tauri::command]
+pub fn check_due_date_notify(app: AppHandle) -> Result<(), String> {
+    let tasks = load_tasks(&app)?;
+    for task in &tasks {
+        if let Some(due_date) = task.due_date {
+            let now = chrono::Local::now().date_naive();
+            let term = due_date - now;
+            let days = term.num_days().max(0);
+            if days == 3 {
+                
+            }
+        }
+    }
+    Ok(())
+}
 
 #[tauri::command]
 pub fn save_hardworker(app: AppHandle, name: String) -> Result<HardWorker, String> {
@@ -92,7 +125,12 @@ fn save_tasks_to_file(app: &AppHandle, tasks: &Vec<Task>) -> Result<(), String> 
 // -----------------------------
 
 #[tauri::command]
-pub fn load_tasks(app: AppHandle) -> Result<Vec<Task>, String> {
+pub fn get_tasks(app: AppHandle) -> Result<Vec<Task>, String> {
+    let tasks = load_tasks(&app)?;
+    Ok(tasks)
+}
+
+fn load_tasks(app: &AppHandle) -> Result<Vec<Task>, String> {
     let path = app
         .path()
         .resolve("zantas/tasks.json", BaseDirectory::AppData)
