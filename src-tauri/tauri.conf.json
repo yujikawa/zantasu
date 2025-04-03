@@ -14,8 +14,8 @@
     "windows": [
       {
         "title": "残業したくないので、タスク管理はじめました。",
-        "width": 960,
-        "height": 800,
+        "width": 1000,
+        "height": 830,
         "resizable": false,
         "fullscreen": false,
         "decorations": true,
