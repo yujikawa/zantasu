@@ -103,7 +103,7 @@ body {
     /* 魔法っぽい淡い青 */
     border-radius: 12px;
     color: #fff;
-    font-family: 'serif';
+    font-family: "serif", sans-serif;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s;

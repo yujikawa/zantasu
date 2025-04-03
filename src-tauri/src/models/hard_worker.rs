@@ -100,7 +100,7 @@ impl HardWorker {
             rank: Rank::F,
             job: Job::random_job(),
             achievement: 0,
-            last_complete: None,
+            last_complete: Some("実績なし".to_string()),
         }
     }
 }

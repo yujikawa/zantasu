@@ -63,7 +63,7 @@ pub fn StatusScene(
             <div class="status-item">
                 <label>依頼達成最終日</label>
                 <p>{
-                    hardworker.get().unwrap().last_complete.unwrap_or("実績なし".to_string())
+                    hardworker.get().unwrap().last_complete
                 } </p>
             </div>
 

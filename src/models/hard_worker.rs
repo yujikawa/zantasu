@@ -136,9 +136,9 @@ impl HardWorker {
         Self {
             name: name,
             rank: Rank::F,
-            job: None,
+            job: Some(Job::Jobless),
             achievement: 0,
-            last_complete: None,
+            last_complete: Some("実績なし".to_string()),
         }
     }
 }
