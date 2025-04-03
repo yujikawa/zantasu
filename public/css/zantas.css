@@ -227,6 +227,7 @@ body {
     overflow: hidden;
     top: 150px;
     left: 50px;
+    -webkit-app-region: no-drag;
 }
 
 .task-form-title {
