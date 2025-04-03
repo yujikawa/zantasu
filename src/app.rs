@@ -44,7 +44,7 @@ pub fn App() -> impl IntoView {
         
         
         async move {
-            let result = invoke("load_hardworker", JsValue::NULL).await;
+            let result = invoke("get_hardworker", JsValue::NULL).await;
             logging::log!("{:?}", result);
             if let Ok(hw) = serde_wasm_bindgen::from_value::<HardWorker>(result) {
                 logging::log!("ハードワーカーをLOADしました");

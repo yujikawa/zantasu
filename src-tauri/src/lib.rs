@@ -6,7 +6,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            commands::load_hardworker,
+            commands::get_hardworker,
             commands::save_hardworker,
             commands::save_tasks,
             commands::load_tasks,

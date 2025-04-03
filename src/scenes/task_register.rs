@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use crate::app::Scene;
 use crate::components::menu_bar::MenuBarComponent;
 use crate::components::window_message::WindowMessage;
@@ -21,6 +23,7 @@ pub fn TaskRegisterScene(
     hardworker: RwSignal<Option<HardWorker>>,
     tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
+    let character = RwSignal::new("rena/hearing.png".to_string());
     let message = RwSignal::new(Message::new(
         "レーナ".to_string(),
         format!(
@@ -82,7 +85,18 @@ pub fn TaskRegisterScene(
             "レーナ".to_string(),
             format!("「{}」を登録しました！", title.get()),
         ));
+        character.set("rena/register_success.png".to_string());
 
+        set_timeout(
+            move || {
+                message.set(Message::new(
+                    "レーナ".to_string(),
+                    format!("ほかに依頼があれば引き続き伺います!"),
+                ));
+                character.set("rena/hearing.png".to_string());
+            },
+            Duration::from_secs(2),
+        );
         // 入力リセット
         title.set("".to_string());
         description.set("".to_string());
@@ -120,7 +134,7 @@ pub fn TaskRegisterScene(
             </Show>
 
         // === 受付嬢（立ち絵） ===
-        <img src="public/assets/characters/rena/hearing.png"
+        <img src={move || format!("public/assets/characters/{}", character.get())}
             class="zentas-person" />
         // === セリフウィンドウ ===
         <WindowMessage message={ message }/>

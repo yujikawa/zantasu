@@ -20,7 +20,23 @@ pub fn save_hardworker(app: AppHandle, name: String) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn load_hardworker(app: AppHandle) -> Result<HardWorker, String> {
+pub fn get_hardworker(app: AppHandle) -> Result<HardWorker, String> {
+    let path = app
+        .path()
+        .resolve("zantas/hardworker.json", BaseDirectory::AppData)
+        .map_err(|e| e.to_string())?;
+
+    if !path.exists() {
+        // ファイルがない場合はデフォルトを返す
+        return Ok(HardWorker::new("".to_string()));
+    }
+    let json = std::fs::read_to_string(&path).map_err(|e| e.to_string())?;
+    let hw: HardWorker = serde_json::from_str(&json).map_err(|e| e.to_string())?;
+
+    Ok(hw)
+}
+
+fn load_hardworker(app: &AppHandle) -> Result<HardWorker, String> {
     let path = app
         .path()
         .resolve("zantas/hardworker.json", BaseDirectory::AppData)
@@ -41,14 +57,14 @@ pub fn complete_task(app: AppHandle, tasks: Vec<Task>) -> Result<(), String> {
     // ---------- タスク側更新 ----------
     save_tasks_to_file(&app, &tasks)?;
 
-    // ---------- ハードワーカー更新 ----------
+    // // ---------- ハードワーカー更新 ----------
     let hw_path = app
         .path()
         .resolve("zantas/hardworker.json", BaseDirectory::AppData)
         .map_err(|e| e.to_string())?;
 
-    let json_hw = std::fs::read_to_string(&hw_path).map_err(|e| e.to_string())?;
-    let mut hw: HardWorker = serde_json::from_str(&json_hw).map_err(|e| e.to_string())?;
+    // let json_hw = std::fs::read_to_string(&hw_path).map_err(|e| e.to_string())?;
+    let mut hw: HardWorker = load_hardworker(&app)?;
 
     hw.achievement += 1;
     hw.last_complete = Some(chrono::Local::now().format("%Y-%m-%d").to_string());

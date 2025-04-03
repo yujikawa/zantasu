@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use crate::app::Scene;
 use crate::components::board::BoardComponent;
 use crate::components::menu_bar::MenuBarComponent;
@@ -111,6 +113,16 @@ pub fn TaskListScene(
                                         Message::new("レーナ".to_string(),  format!("「{}」の依頼をやらないんですね...わかりました。", task_delete.title)
                                     ));
                                     character.set("rena/delete.png".to_string());
+                                    set_timeout(
+                                        move || {
+                                            message.set(Message::new(
+                                                "レーナ".to_string(),
+                                                format!("ほかに報告したい依頼があれば引き続き伺います!"),
+                                            ));
+                                            character.set("rena/watching.png".to_string());
+                                        },
+                                        Duration::from_secs(3),
+                                    );
                                 }
                             >
                                 "依頼削除"
@@ -130,7 +142,7 @@ pub fn TaskListScene(
                                             })).unwrap();
                                             let _ = invoke("complete_task", args).await;
                                             logging::log!("タスク完了で削除 & 保存しました");
-                                            let result = invoke("load_hardworker", JsValue::NULL).await;
+                                            let result = invoke("get_hardworker", JsValue::NULL).await;
                                             if let Ok(hw) = serde_wasm_bindgen::from_value::<HardWorker>(result) {
                                                 logging::log!("ハードワーカーをLOADしました");
                                                 hardworker.set(Some(hw));
@@ -141,6 +153,16 @@ pub fn TaskListScene(
                                         Message::new("レーナ".to_string(),  format!("「{}」の依頼を完了しましたね！おめでとうございます！", task_complete.title)
                                     ));
                                     character.set("rena/congrats.png".to_string());
+                                    set_timeout(
+                                        move || {
+                                            message.set(Message::new(
+                                                "レーナ".to_string(),
+                                                format!("ほかに報告したい依頼があれば引き続き伺います!"),
+                                            ));
+                                            character.set("rena/watching.png".to_string());
+                                        },
+                                        Duration::from_secs(3),
+                                    );
                                 }
                             >
                                 "達成報告"
