@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use tauri::{fs, path::BaseDirectory, AppHandle, Manager};
 
 #[tauri::command]
-pub fn save_hardworker(app: AppHandle, name: String) -> Result<(), String> {
+pub fn save_hardworker(app: AppHandle, name: String) -> Result<HardWorker, String> {
     let path = app
         .path()
         .resolve("zantas/hardworker.json", BaseDirectory::AppData)
@@ -16,7 +16,7 @@ pub fn save_hardworker(app: AppHandle, name: String) -> Result<(), String> {
     let json = serde_json::to_string_pretty(&hw).map_err(|e| e.to_string())?;
     std::fs::write(&path, json).map_err(|e| e.to_string())?;
 
-    Ok(())
+    Ok(hw)
 }
 
 #[tauri::command]

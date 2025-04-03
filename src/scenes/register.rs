@@ -22,11 +22,13 @@ fn register(
             "name": name.get()
         }))
         .unwrap();
-        let hw = HardWorker::new(name.get());
-        let _ = invoke("save_hardworker", args).await;
-        leptos::logging::log!("登録しました");
-        hardworker.set(Some(hw));
-        scene.set(Scene::Guild);
+        // let hw = HardWorker::new(name.get());
+        let result = invoke("save_hardworker", args).await;
+        if let Ok(hw) = serde_wasm_bindgen::from_value::<HardWorker>(result) {
+            hardworker.set(Some(hw));
+            leptos::logging::log!("登録しました");
+            scene.set(Scene::Guild);
+        }
     });
 }
 

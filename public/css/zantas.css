@@ -20,7 +20,7 @@ body {
     bottom: 0;
     overflow: hidden;
     width: 960px;
-    height: 800px;
+    height: 830px;
     -webkit-app-region: drag;
     margin: auto;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);

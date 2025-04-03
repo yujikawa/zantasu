@@ -8,8 +8,6 @@ pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();
-            #[cfg(target_os="macos")]
-            window.set_decorations(true)?;
             #[cfg(target_os="windows")]
             window.set_decorations(false)?;
             
