@@ -22,7 +22,7 @@ pub fn run() {
             commands::close_app,
             commands::complete_task,
             commands::notify,
-            commands::register_scheduled_task,
+            commands::save_scheduled_task,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

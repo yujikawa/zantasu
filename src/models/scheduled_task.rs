@@ -1,7 +1,17 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
-#[derive(Deserialize, Serialize, Clone, Debug, PartialEq, Eq, Hash)]
-pub struct ScheduledTask {
+#[derive(Serialize)]
+#[serde(tag = "pattern_type")]
+pub enum PatternDTO {
+    OneTime { datetime: String },
+    Monthly { day: u32, time: String },
+    Weekly { weekday: u32, time: String },
+    Daily { time: String },
+}
+
+#[derive(Serialize)]
+pub struct ScheduledTaskDTO {
     pub title: String,
-    pub scheduled_time: String,
+    pub description: String,
+    pub pattern: PatternDTO,
 }

@@ -153,7 +153,7 @@ body {
 .task-list-window {
     position: absolute;
     width: 400px;
-    height: 300px;
+    height: 450px;
     background: rgba(31, 29, 29, 0.9);
     border: 2px solid #000;
     border-radius: 8px;
@@ -168,13 +168,14 @@ body {
     font-weight: bold;
     color: #fff;
     margin-bottom: 8px;
+    border-bottom: 1px solid #555;
 }
 
 .task-list-scroll {
-    height: 250px;
+    height: 400px;
     /* リスト部分だけ固定高さ */
     overflow-y: auto;
-    border-top: 1px solid #555;
+    /* border-top: 1px solid #555; */
     padding-top: 8px;
 }
 
@@ -217,9 +218,82 @@ body {
 
 
 /* タスク登録フォーム */
+.scheduled-task-form {
+    position: absolute;
+    width: 370px;
+    height: 450px;
+    background: rgba(31, 29, 29, 0.9);
+    border: 2px solid #000;
+    border-radius: 8px;
+    padding: 8px;
+    overflow: hidden;
+    top: 150px;
+    left: 50px;
+    -webkit-app-region: no-drag;
+
+}
+
+.scheduled-task-form-scroll {
+    /* width: 400px; */
+    height: 450px;
+    overflow-y: auto;
+    /* border-top: 1px solid #555; */
+    padding-top: 8px;
+
+}
+
+.scheduled-task-form-input-list {
+    max-height: 330px;
+    /* 高さは親 task-form に収まるように調整 */
+    overflow-y: auto;
+    /* 縦スクロール */
+    overflow-x: hidden;
+    /* 横スクロールは出さない */
+    padding-right: 4px;
+    /* スクロールバー分の余白（お好み） */
+    margin-top: 8px;
+    /* 上との余白 */
+}
+
+.scheduled-task-form-input {
+    width: 320px;
+}
+
+
+.scheduled-task-form-input label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+.scheduled-task-form-input input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #5b3924;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.7);
+    font-family: inherit;
+    color: #000;
+    font-size: 16px;
+}
+
+.scheduled-task-form-input textarea {
+    width: 100%;
+    height: 120px;
+    padding: 8px;
+    border: 1px solid #5b3924;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.7);
+    font-family: inherit;
+    color: #000;
+    font-size: 16px;
+}
+
 .task-form {
     position: absolute;
-    width: 400px;
+    width: 370px;
     height: 450px;
     background: rgba(31, 29, 29, 0.9);
     border: 2px solid #000;
@@ -235,15 +309,16 @@ body {
     font-weight: bold;
     color: #fff;
     margin-bottom: 8px;
+    border-top: 1px solid #555;
 }
 
 .task-form-input-list {
-    border-top: 1px solid #555;
+    /* border-top: 1px solid #555; */
     padding-top: 8px;
 }
 
 .task-form-input {
-    width: 380px;
+    width: 350px;
 }
 
 .task-form-input label {

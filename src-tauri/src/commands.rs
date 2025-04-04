@@ -170,11 +170,7 @@ fn load_tasks(app: &AppHandle) -> Result<Vec<Task>, String> {
 }
 
 #[tauri::command]
-pub fn register_scheduled_task(
-    app: AppHandle,
-    scheduled_task: ScheduledTask,
-) -> Result<(), String> {
-    dbg!(&scheduled_task);
+pub fn save_scheduled_task(app: AppHandle, dto: ScheduledTask) -> Result<(), String> {
     let path = app
         .path()
         .resolve("zantas/scheduled_tasks.json", BaseDirectory::AppData)
@@ -182,7 +178,7 @@ pub fn register_scheduled_task(
 
     std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
 
-    // 既存の定期タスクを読み込む
+    // // 既存の定期タスクを読み込む
     let mut list: Vec<ScheduledTask> = if path.exists() {
         let json = std::fs::read_to_string(&path).map_err(|e| e.to_string())?;
         serde_json::from_str(&json).map_err(|e| e.to_string())?
@@ -191,7 +187,7 @@ pub fn register_scheduled_task(
     };
 
     // 新しいタスクを追加
-    list.push(scheduled_task);
+    list.push(dto);
 
     // 保存
     let json = serde_json::to_string_pretty(&list).map_err(|e| e.to_string())?;

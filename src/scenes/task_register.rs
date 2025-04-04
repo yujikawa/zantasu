@@ -168,7 +168,7 @@ pub fn TaskRegisterScene(
 
             <div style="margin-top: 20px;">
                 // <button style="background:rgba(220, 90, 90, 0.7);" on:click=move |_| scene.set(Scene::Guild)>"閉じる"</button>
-                <button style="background:rgba(90, 116, 220, 0.7);margin-left:10px;" on:click=submit_task>"登録"</button>
+                <button style="background:rgba(90, 180, 120, 0.7);" on:click=submit_task>"登録"</button>
             </div>
         </div>
 
