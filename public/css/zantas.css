@@ -261,6 +261,7 @@ body {
     background: rgba(255, 255, 255, 0.7);
     font-family: inherit;
     color: #000;
+    font-size: 16px;
 }
 
 .task-form-input textarea {
@@ -272,6 +273,8 @@ body {
     background: rgba(255, 255, 255, 0.7);
     font-family: inherit;
     color: #000;
+    font-size: 16px;
+
 }
 
 /* メニュー */
