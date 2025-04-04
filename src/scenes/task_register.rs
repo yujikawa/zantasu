@@ -68,17 +68,15 @@ pub fn TaskRegisterScene(
         // タスクの新規登録
         tasks.update(|opt| {
             if let Some(list) = opt {
-                list.push(new_task);
+                list.push(new_task.clone());
             }
         });
         spawn_local(async move {
-            if let Some(ts) = tasks.get() {
-                let args = serde_wasm_bindgen::to_value(&serde_json::json!({
-                    "tasks": ts
-                }))
-                .unwrap();
-                let _ = invoke("save_tasks", args).await;
-            }
+            let args = serde_wasm_bindgen::to_value(&serde_json::json!({
+                "task": new_task
+            }))
+            .unwrap();
+            let _ = invoke("save_task", args).await;
         });
 
         message.set(Message::new(

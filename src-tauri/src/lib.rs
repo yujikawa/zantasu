@@ -17,11 +17,12 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::get_hardworker,
             commands::save_hardworker,
-            commands::save_tasks,
+            commands::save_task,
             commands::get_tasks,
             commands::close_app,
             commands::complete_task,
             commands::notify,
+            commands::register_scheduled_task,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

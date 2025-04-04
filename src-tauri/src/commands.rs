@@ -1,7 +1,7 @@
-use std::path::PathBuf;
-
 use crate::models::hard_worker::HardWorker;
+use crate::models::scheduled_task::ScheduledTask;
 use crate::models::task::Task;
+use std::path::PathBuf;
 use tauri::{path::BaseDirectory, AppHandle, Manager};
 use tauri_plugin_notification::NotificationExt;
 
@@ -29,9 +29,7 @@ pub fn check_due_date_notify(app: AppHandle) -> Result<(), String> {
             let now = chrono::Local::now().date_naive();
             let term = due_date - now;
             let days = term.num_days().max(0);
-            if days == 3 {
-                
-            }
+            if days == 3 {}
         }
     }
     Ok(())
@@ -105,6 +103,30 @@ pub fn complete_task(app: AppHandle, tasks: Vec<Task>) -> Result<(), String> {
 }
 
 #[tauri::command]
+pub fn save_task(app: AppHandle, task: Task) -> Result<(), String> {
+    save_task_to_file(&app, &task)
+}
+
+fn save_task_to_file(app: &AppHandle, task: &Task) -> Result<(), String> {
+    let path = app
+        .path()
+        .resolve("zantas/tasks.json", BaseDirectory::AppData)
+        .map_err(|e| e.to_string())?;
+
+    // 既存の定期タスクを読み込む
+    let mut list: Vec<Task> = load_tasks(&app)?;
+
+    // 新しいタスクを追加
+    list.push(task.clone());
+
+    // 保存
+    let json = serde_json::to_string_pretty(&list).map_err(|e| e.to_string())?;
+    std::fs::write(&path, json).map_err(|e| e.to_string())?;
+
+    Ok(())
+}
+
+#[tauri::command]
 pub fn save_tasks(app: AppHandle, tasks: Vec<Task>) -> Result<(), String> {
     save_tasks_to_file(&app, &tasks)
 }
@@ -145,6 +167,37 @@ fn load_tasks(app: &AppHandle) -> Result<Vec<Task>, String> {
     let tasks: Vec<Task> = serde_json::from_str(&json).map_err(|e| e.to_string())?;
 
     Ok(tasks)
+}
+
+#[tauri::command]
+pub fn register_scheduled_task(
+    app: AppHandle,
+    scheduled_task: ScheduledTask,
+) -> Result<(), String> {
+    dbg!(&scheduled_task);
+    let path = app
+        .path()
+        .resolve("zantas/scheduled_tasks.json", BaseDirectory::AppData)
+        .map_err(|e| e.to_string())?;
+
+    std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
+
+    // 既存の定期タスクを読み込む
+    let mut list: Vec<ScheduledTask> = if path.exists() {
+        let json = std::fs::read_to_string(&path).map_err(|e| e.to_string())?;
+        serde_json::from_str(&json).map_err(|e| e.to_string())?
+    } else {
+        vec![]
+    };
+
+    // 新しいタスクを追加
+    list.push(scheduled_task);
+
+    // 保存
+    let json = serde_json::to_string_pretty(&list).map_err(|e| e.to_string())?;
+    std::fs::write(&path, json).map_err(|e| e.to_string())?;
+
+    Ok(())
 }
 
 #[tauri::command]
