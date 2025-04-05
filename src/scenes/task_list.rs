@@ -6,7 +6,7 @@ use crate::components::menu_bar::MenuBarComponent;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
 use crate::models::message::Message;
-use crate::models::task::Task;
+use crate::models::task::{DeleteTaskRequest, Task};
 use leptos::task::{self, spawn_local};
 use leptos::{logging, prelude::*};
 use wasm_bindgen::prelude::*;
@@ -94,21 +94,22 @@ pub fn TaskListScene(
                                 <div class="task-operation-buttons">
                                 <button class="task-delete"
                                 on:click=move |_| {
-                                    tasks.update(|opt| {
-                                        if let Some(list) = opt {
-                                            list.retain(|t| t != &task_delete);
-                                        }
-                                    });
                                     spawn_local({
-                                        let tasks = tasks.clone();
+                                        let task_id = task_delete.id.clone();
                                         async move {
+                                            let request = DeleteTaskRequest {task_id};
                                             let args = serde_wasm_bindgen::to_value(&serde_json::json!({
-                                                "tasks": tasks.get().clone().unwrap_or(vec![])
+                                                "dto": &request
                                             })).unwrap();
-                                            let _ = invoke("save_tasks", args).await;
-                                            logging::log!("タスク完了で削除 & 保存しました");
+                                            let result = invoke("delete_task", args).await;
+                                            match serde_wasm_bindgen::from_value::<Vec<Task>>(result) {
+                                                Ok(current_tasks) => tasks.set(Some(current_tasks)),
+                                                Err(e) => logging::log!("{:?}", e)
+                                            }
                                         }
                                     });
+
+                                    // Reaction
                                     message.set(
                                         Message::new("レーナ".to_string(),  format!("「{}」の依頼をやらないんですね...わかりました。", task_delete.title)
                                     ));
@@ -129,19 +130,19 @@ pub fn TaskListScene(
                             </button>
                             <button class="task-complete"
                                 on:click=move |_| {
-                                    tasks.update(|opt| {
-                                        if let Some(list) = opt {
-                                            list.retain(|t| t != &task_complete);
-                                        }
-                                    });
                                     spawn_local({
-                                        let tasks = tasks.clone();
+                                        let task_id = task_complete.id.clone();
                                         async move {
+                                            let request = DeleteTaskRequest {task_id};
                                             let args = serde_wasm_bindgen::to_value(&serde_json::json!({
-                                                "tasks": tasks.get().clone().unwrap_or(vec![])
+                                                "dto": &request
                                             })).unwrap();
-                                            let _ = invoke("complete_task", args).await;
-                                            logging::log!("タスク完了で削除 & 保存しました");
+                                            let result = invoke("complete_task", args).await;
+                                            match serde_wasm_bindgen::from_value::<Vec<Task>>(result) {
+                                                Ok(current_tasks) => tasks.set(Some(current_tasks)),
+                                                Err(e) => logging::log!("{:?}", e)
+                                            }
+
                                             let result = invoke("get_hardworker", JsValue::NULL).await;
                                             if let Ok(hw) = serde_wasm_bindgen::from_value::<HardWorker>(result) {
                                                 logging::log!("ハードワーカーをLOADしました");
@@ -149,6 +150,7 @@ pub fn TaskListScene(
                                             }
                                         }
                                     });
+                                    // reaction
                                     message.set(
                                         Message::new("レーナ".to_string(),  format!("「{}」の依頼を完了しましたね！おめでとうございます！", task_complete.title)
                                     ));

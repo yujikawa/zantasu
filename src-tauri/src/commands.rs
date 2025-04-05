@@ -1,9 +1,10 @@
 use crate::models::hard_worker::HardWorker;
 use crate::models::scheduled_task::ScheduledTask;
-use crate::models::task::Task;
+use crate::models::task::{DeleteTaskRequest, Task, TaskCreateDTO};
 use std::path::PathBuf;
 use tauri::{path::BaseDirectory, AppHandle, Manager};
 use tauri_plugin_notification::NotificationExt;
+use uuid::Uuid;
 
 #[tauri::command]
 pub fn notify(app: AppHandle, title: String, message: String) -> Result<(), String> {
@@ -80,9 +81,9 @@ fn load_hardworker(app: &AppHandle) -> Result<HardWorker, String> {
 }
 
 #[tauri::command]
-pub fn complete_task(app: AppHandle, tasks: Vec<Task>) -> Result<(), String> {
+pub fn complete_task(app: AppHandle, dto: DeleteTaskRequest) -> Result<Vec<Task>, String> {
     // ---------- タスク側更新 ----------
-    save_tasks_to_file(&app, &tasks)?;
+    let tasks = delete_task_from_file(&app, &dto)?;
 
     // // ---------- ハードワーカー更新 ----------
     let hw_path = app
@@ -99,15 +100,15 @@ pub fn complete_task(app: AppHandle, tasks: Vec<Task>) -> Result<(), String> {
     let json_hw = serde_json::to_string_pretty(&hw).map_err(|e| e.to_string())?;
     std::fs::write(&hw_path, json_hw).map_err(|e| e.to_string())?;
 
-    Ok(())
+    Ok(tasks)
 }
 
 #[tauri::command]
-pub fn save_task(app: AppHandle, task: Task) -> Result<(), String> {
+pub fn save_task(app: AppHandle, task: TaskCreateDTO) -> Result<Task, String> {
     save_task_to_file(&app, &task)
 }
 
-fn save_task_to_file(app: &AppHandle, task: &Task) -> Result<(), String> {
+fn save_task_to_file(app: &AppHandle, task: &TaskCreateDTO) -> Result<Task, String> {
     let path = app
         .path()
         .resolve("zantas/tasks.json", BaseDirectory::AppData)
@@ -116,14 +117,59 @@ fn save_task_to_file(app: &AppHandle, task: &Task) -> Result<(), String> {
     // 既存の定期タスクを読み込む
     let mut list: Vec<Task> = load_tasks(&app)?;
 
+    let new_task = Task::new(
+        task.title.clone(),
+        task.description.clone(),
+        task.rank.clone(),
+        task.due_date,
+    );
+
     // 新しいタスクを追加
-    list.push(task.clone());
+    list.push(new_task.clone());
 
     // 保存
     let json = serde_json::to_string_pretty(&list).map_err(|e| e.to_string())?;
     std::fs::write(&path, json).map_err(|e| e.to_string())?;
 
-    Ok(())
+    Ok(new_task.clone())
+}
+
+#[tauri::command]
+pub fn delete_task(app: AppHandle, dto: DeleteTaskRequest) -> Result<Vec<Task>, String> {
+    let tasks = delete_task_from_file(&app, &dto)?;
+
+    Ok(tasks)
+}
+
+pub fn delete_task_from_file(
+    app: &AppHandle,
+    dto: &DeleteTaskRequest,
+) -> Result<Vec<Task>, String> {
+    let path = app
+        .path()
+        .resolve("zantas/tasks.json", BaseDirectory::AppData)
+        .map_err(|e| e.to_string())?;
+
+    if !path.exists() {
+        return Err("タスクファイルが存在しません。".to_string());
+    }
+
+    let json = std::fs::read_to_string(&path).map_err(|e| e.to_string())?;
+    let mut tasks: Vec<Task> = serde_json::from_str(&json).map_err(|e| e.to_string())?;
+
+    let target_id = Uuid::parse_str(&dto.task_id).map_err(|e| e.to_string())?;
+    let before_count = tasks.len();
+
+    tasks.retain(|task| task.id != target_id);
+
+    if tasks.len() == before_count {
+        return Err("該当するタスクが見つかりませんでした。".to_string());
+    }
+
+    let new_json = serde_json::to_string_pretty(&tasks).map_err(|e| e.to_string())?;
+    std::fs::write(&path, new_json).map_err(|e| e.to_string())?;
+
+    Ok(tasks)
 }
 
 #[tauri::command]

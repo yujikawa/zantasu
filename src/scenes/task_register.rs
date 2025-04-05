@@ -5,7 +5,7 @@ use crate::components::menu_bar::MenuBarComponent;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
 use crate::models::message::Message;
-use crate::models::task::Task;
+use crate::models::task::{Task, TaskCreateDTO};
 use leptos::prelude::*;
 use leptos::task::{self, spawn_local};
 
@@ -51,7 +51,7 @@ pub fn TaskRegisterScene(
         }
     });
     let submit_task = move |_| {
-        let new_task = Task {
+        let new_task = TaskCreateDTO {
             title: title.get(),
             description: if description.get().is_empty() {
                 None
@@ -65,18 +65,21 @@ pub fn TaskRegisterScene(
                 Some(due_date.get())
             },
         };
-        // タスクの新規登録
-        tasks.update(|opt| {
-            if let Some(list) = opt {
-                list.push(new_task.clone());
-            }
-        });
+
         spawn_local(async move {
             let args = serde_wasm_bindgen::to_value(&serde_json::json!({
                 "task": new_task
             }))
             .unwrap();
-            let _ = invoke("save_task", args).await;
+            let task = invoke("save_task", args).await;
+            if let Ok(task) = serde_wasm_bindgen::from_value::<Task>(task) {
+                // タスクの新規登録
+                tasks.update(|opt| {
+                    if let Some(list) = opt {
+                        list.push(task.clone());
+                    }
+                });
+            }
         });
 
         message.set(Message::new(
