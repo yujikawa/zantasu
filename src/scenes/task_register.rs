@@ -36,20 +36,7 @@ pub fn TaskRegisterScene(
     let title = RwSignal::new(String::new());
     let description = RwSignal::new(String::new());
     let due_date = RwSignal::new(String::new());
-    let title_ref = NodeRef::<leptos::html::Input>::new();
-    let description_ref = NodeRef::<leptos::html::Textarea>::new();
-    let due_date_ref = NodeRef::<leptos::html::Input>::new();
-    Effect::new(move |_| {
-        if let Some(input) = title_ref.get() {
-            input.set_value(&title.get());
-        }
-        if let Some(textarea) = description_ref.get() {
-            textarea.set_value(&description.get());
-        }
-        if let Some(input) = due_date_ref.get() {
-            input.set_value(&due_date.get());
-        }
-    });
+
     let submit_task = move |_| {
         let new_task = TaskCreateDTO {
             title: title.get(),
@@ -147,14 +134,13 @@ pub fn TaskRegisterScene(
                 <div class="task-form-input">
                     <label>"依頼タイトル（必須）"</label>
                     <input
-                    node_ref=title_ref
+                    prop:value=move || title.get()
                     placeholder="例: ゴブリン退治" on:input=move |e| title.set(event_target_value(&e)) />
                 </div>
                 <div class="task-form-input">
                     <label>"依頼詳細（任意）"</label>
                     <textarea
-                    node_ref=description_ref
-
+                    prop:value=move || description.get()
                     placeholder="例: 西の森で発生中" on:input=move |e| description.set(event_target_value(&e))>
                     {move || description.get()}
                     </textarea>
@@ -163,8 +149,7 @@ pub fn TaskRegisterScene(
                     <label>"締切日（任意）"</label>
                     <input
                     type="date"
-                    node_ref=due_date_ref
-
+                    prop:value=move || due_date.get()
                     placeholder="例: 2025-05-01" on:input=move |e| due_date.set(event_target_value(&e)) />
                 </div>
             </div>
