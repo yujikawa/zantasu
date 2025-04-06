@@ -30,7 +30,7 @@ pub fn ScheduledTaskListScene(
     let message = RwSignal::new(Message::new(
         "レーナ".to_string(),
         format!(
-            "{}さんへの依頼が確認できます。依頼が完了したら忘れずに報告してくださいね！",
+            "{}さんへの定期依頼の設定が確認できます。定期依頼が不要な場合は設定を削除してくださいね",
             hardworker.get().unwrap().name
         ),
     ));
@@ -82,7 +82,7 @@ pub fn ScheduledTaskListScene(
         // タスク一覧
         <div class="task-list-main">
             <div class="task-list-window">
-                <div class="task-list-title">"依頼一覧"</div>
+                <div class="task-list-title">"定期依頼設定一覧"</div>
                 <div class="task-list-scroll">
                     <For
                         each=move || tasks.get().unwrap()
@@ -133,7 +133,7 @@ pub fn ScheduledTaskListScene(
                                             move || {
                                                 message.set(Message::new(
                                                     "レーナ".to_string(),
-                                                    format!("ほかに報告したい依頼があれば引き続き伺います!"),
+                                                    format!("ほかに調整したい定期依頼があれば引き続き伺います!"),
                                                 ));
                                                 character.set("rena/watching.png".to_string());
                                             },
