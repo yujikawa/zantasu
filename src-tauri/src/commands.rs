@@ -1,6 +1,7 @@
 use crate::models::hard_worker::HardWorker;
-use crate::models::scheduled_task::ScheduledTask;
-use crate::models::task::{DeleteTaskRequest, ScheduledTaskCreateDTO, Task, TaskCreateDTO};
+use crate::models::task::{
+    DeleteTaskRequest, ScheduledTask, ScheduledTaskCreateDTO, Task, TaskCreateDTO,
+};
 use std::path::PathBuf;
 use tauri::{path::BaseDirectory, AppHandle, Manager};
 use tauri_plugin_notification::NotificationExt;
@@ -121,7 +122,6 @@ fn save_task_to_file(app: &AppHandle, task: &TaskCreateDTO) -> Result<Task, Stri
         task.title.clone(),
         task.description.clone(),
         task.due_date.clone(),
-        None,
     );
 
     // 新しいタスクを追加
@@ -200,23 +200,21 @@ fn load_tasks(app: &AppHandle) -> Result<Vec<Task>, String> {
 }
 
 #[tauri::command]
-pub fn save_scheduled_task(app: AppHandle, dto: ScheduledTaskCreateDTO) -> Result<Task, String> {
+pub fn save_scheduled_task(
+    app: AppHandle,
+    dto: ScheduledTaskCreateDTO,
+) -> Result<ScheduledTask, String> {
     let path = app
         .path()
-        .resolve("zantas/tasks.json", BaseDirectory::AppData)
+        .resolve("zantas/scheduled_tasks.json", BaseDirectory::AppData)
         .map_err(|e| e.to_string())?;
 
     std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
 
-    let new_task = Task::new(
-        dto.title.clone(),
-        dto.description.clone(),
-        None,
-        dto.pattern,
-    );
+    let new_schedule_task = ScheduledTask::new(dto.task.clone(), dto.pattern);
 
     // // 既存の定期タスクを読み込む
-    let mut list: Vec<Task> = if path.exists() {
+    let mut list: Vec<ScheduledTask> = if path.exists() {
         let json = std::fs::read_to_string(&path).map_err(|e| e.to_string())?;
         serde_json::from_str(&json).map_err(|e| e.to_string())?
     } else {
@@ -224,13 +222,13 @@ pub fn save_scheduled_task(app: AppHandle, dto: ScheduledTaskCreateDTO) -> Resul
     };
 
     // 新しいタスクを追加
-    list.push(new_task.clone());
+    list.push(new_schedule_task.clone());
 
     // 保存
     let json = serde_json::to_string_pretty(&list).map_err(|e| e.to_string())?;
     std::fs::write(&path, json).map_err(|e| e.to_string())?;
 
-    Ok(new_task)
+    Ok(new_schedule_task)
 }
 
 #[tauri::command]

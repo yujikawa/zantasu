@@ -28,4 +28,5 @@ pub struct TaskResponse {
     pub description: Option<String>,
     pub due_date: Option<String>,
     pub pattern: Option<Pattern>,
+    pub last_triggered: Option<String>,
 }

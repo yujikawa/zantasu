@@ -80,127 +80,248 @@ pub fn TaskListScene(
         <WindowMessage message={ message }/>
 
         // タスク一覧
-        <div class="task-list-window">
-            <div class="task-list-title">"依頼一覧"</div>
-            <div class="task-list-scroll">
-                <For
-                    each=move || tasks.get().unwrap()
-                    key=|task| task.clone() // task自体がキー
-                    children=move |task| {
-                        let task_select = task.clone();
-                        let task_delete = task.clone();
-                        let task_complete = task.clone();
+        <div class="task-list-main">
+            <div class="task-list-window">
+                <div class="task-list-title">"依頼一覧"</div>
+                <div class="task-list-scroll">
+                    <For
+                        each=move || tasks.get().unwrap()
+                        key=|task| task.clone() // task自体がキー
+                        children=move |task| {
+                            let task_select = task.clone();
+                            let task_delete = task.clone();
+                            let task_complete = task.clone();
 
-                        view! {
-                            <div class=move || {
-                                if selected_task_id.get() == Some(task.id.clone()) {
-                                    "task-item task-selected"
-                                } else {
-                                    "task-item"
-                                }
-                            }
-                            on:click=move |_| select_task(character, message, task_select.clone(), selected_task_id)>
-                                <div class="task-item-basic">
-                                <div>
-                                {
-                                    if task.pattern.is_some() {
-                                        format!("【定期】{}", task.title.clone())
+                            view! {
+                                <div class=move || {
+                                    if selected_task_id.get() == Some(task.id.clone()) {
+                                        "task-item task-selected"
                                     } else {
-                                        format!("【単発】{}", task.title.clone())
+                                        "task-item"
                                     }
-                                }</div>
-                                <div>{task.due_date.clone().unwrap_or("締切未定".into())}</div>
+                                }
+                                on:click=move |_| select_task(character, message, task_select.clone(), selected_task_id)>
+                                    <div class="task-item-basic">
+                                    <div>{ task.title.clone() }</div>
+                                    <div>{task.due_date.clone().unwrap_or("締切未定".into())}</div>
+                                    </div>
+
+                                    <div class="task-operation-buttons">
+                                    <button class="task-delete"
+                                    on:click=move |e| {
+                                        e.stop_propagation();
+                                        spawn_local({
+                                            let task_id = task_delete.id.clone();
+                                            async move {
+                                                let request = DeleteTaskRequest {task_id};
+                                                let args = serde_wasm_bindgen::to_value(&serde_json::json!({
+                                                    "dto": &request
+                                                })).unwrap();
+                                                let result = invoke("delete_task", args).await;
+                                                match serde_wasm_bindgen::from_value::<Vec<Task>>(result) {
+                                                    Ok(current_tasks) => tasks.set(Some(current_tasks)),
+                                                    Err(e) => logging::log!("{:?}", e)
+                                                }
+                                            }
+                                        });
+
+                                        // Reaction
+                                        message.set(
+                                            Message::new("レーナ".to_string(),  format!("「{}」の依頼をやらないんですね...わかりました。", task_delete.title)
+                                        ));
+                                        character.set("rena/delete.png".to_string());
+                                        set_timeout(
+                                            move || {
+                                                message.set(Message::new(
+                                                    "レーナ".to_string(),
+                                                    format!("ほかに報告したい依頼があれば引き続き伺います!"),
+                                                ));
+                                                character.set("rena/watching.png".to_string());
+                                            },
+                                            Duration::from_secs(3),
+                                        );
+                                    }
+                                >
+                                    "依頼削除"
+                                </button>
+                                <button class="task-complete"
+                                    on:click=move |e| {
+                                        e.stop_propagation();
+
+                                        spawn_local({
+                                            let task_id = task_complete.id.clone();
+                                            async move {
+                                                let request = DeleteTaskRequest {task_id};
+                                                let args = serde_wasm_bindgen::to_value(&serde_json::json!({
+                                                    "dto": &request
+                                                })).unwrap();
+                                                let result = invoke("complete_task", args).await;
+                                                match serde_wasm_bindgen::from_value::<Vec<Task>>(result) {
+                                                    Ok(current_tasks) => tasks.set(Some(current_tasks)),
+                                                    Err(e) => logging::log!("{:?}", e)
+                                                }
+
+                                                let result = invoke("get_hardworker", JsValue::NULL).await;
+                                                if let Ok(hw) = serde_wasm_bindgen::from_value::<HardWorker>(result) {
+                                                    logging::log!("ハードワーカーをLOADしました");
+                                                    hardworker.set(Some(hw));
+                                                }
+                                            }
+                                        });
+                                        // reaction
+                                        message.set(
+                                            Message::new("レーナ".to_string(),  format!("「{}」の依頼を完了しましたね！おめでとうございます！", task_complete.title)
+                                        ));
+                                        character.set("rena/congrats.png".to_string());
+                                        set_timeout(
+                                            move || {
+                                                message.set(Message::new(
+                                                    "レーナ".to_string(),
+                                                    format!("ほかに報告したい依頼があれば引き続き伺います!"),
+                                                ));
+                                                character.set("rena/watching.png".to_string());
+                                            },
+                                            Duration::from_secs(3),
+                                        );
+                                    }
+                                >
+                                    "達成報告"
+                                </button>
                                 </div>
 
-                                <div class="task-operation-buttons">
-                                <button class="task-delete"
-                                on:click=move |e| {
-                                    e.stop_propagation();
-                                    spawn_local({
-                                        let task_id = task_delete.id.clone();
-                                        async move {
-                                            let request = DeleteTaskRequest {task_id};
-                                            let args = serde_wasm_bindgen::to_value(&serde_json::json!({
-                                                "dto": &request
-                                            })).unwrap();
-                                            let result = invoke("delete_task", args).await;
-                                            match serde_wasm_bindgen::from_value::<Vec<Task>>(result) {
-                                                Ok(current_tasks) => tasks.set(Some(current_tasks)),
-                                                Err(e) => logging::log!("{:?}", e)
-                                            }
-                                        }
-                                    });
-
-                                    // Reaction
-                                    message.set(
-                                        Message::new("レーナ".to_string(),  format!("「{}」の依頼をやらないんですね...わかりました。", task_delete.title)
-                                    ));
-                                    character.set("rena/delete.png".to_string());
-                                    set_timeout(
-                                        move || {
-                                            message.set(Message::new(
-                                                "レーナ".to_string(),
-                                                format!("ほかに報告したい依頼があれば引き続き伺います!"),
-                                            ));
-                                            character.set("rena/watching.png".to_string());
-                                        },
-                                        Duration::from_secs(3),
-                                    );
-                                }
-                            >
-                                "依頼削除"
-                            </button>
-                            <button class="task-complete"
-                                on:click=move |e| {
-                                    e.stop_propagation();
-
-                                    spawn_local({
-                                        let task_id = task_complete.id.clone();
-                                        async move {
-                                            let request = DeleteTaskRequest {task_id};
-                                            let args = serde_wasm_bindgen::to_value(&serde_json::json!({
-                                                "dto": &request
-                                            })).unwrap();
-                                            let result = invoke("complete_task", args).await;
-                                            match serde_wasm_bindgen::from_value::<Vec<Task>>(result) {
-                                                Ok(current_tasks) => tasks.set(Some(current_tasks)),
-                                                Err(e) => logging::log!("{:?}", e)
-                                            }
-
-                                            let result = invoke("get_hardworker", JsValue::NULL).await;
-                                            if let Ok(hw) = serde_wasm_bindgen::from_value::<HardWorker>(result) {
-                                                logging::log!("ハードワーカーをLOADしました");
-                                                hardworker.set(Some(hw));
-                                            }
-                                        }
-                                    });
-                                    // reaction
-                                    message.set(
-                                        Message::new("レーナ".to_string(),  format!("「{}」の依頼を完了しましたね！おめでとうございます！", task_complete.title)
-                                    ));
-                                    character.set("rena/congrats.png".to_string());
-                                    set_timeout(
-                                        move || {
-                                            message.set(Message::new(
-                                                "レーナ".to_string(),
-                                                format!("ほかに報告したい依頼があれば引き続き伺います!"),
-                                            ));
-                                            character.set("rena/watching.png".to_string());
-                                        },
-                                        Duration::from_secs(3),
-                                    );
-                                }
-                            >
-                                "達成報告"
-                            </button>
-                            </div>
-
-                            </div>
+                                </div>
+                        }
                     }
-                }
-                />
+                    />
+                </div>
             </div>
+
+
+        //      // 定期
+        //     <div class="task-list-window">
+        //         <div class="task-list-title">"定期依頼一覧"</div>
+        //         <div class="task-list-scroll">
+        //             <For
+        //                 each=move || scheduled_tasks.get()
+        //                 key=|task| task.clone() // task自体がキー
+        //                 children=move |task| {
+        //                     let task_select = task.clone();
+        //                     let task_delete = task.clone();
+        //                     let task_complete = task.clone();
+
+        //                     view! {
+        //                         <div class=move || {
+        //                             if selected_task_id.get() == Some(task.id.clone()) {
+        //                                 "task-item task-selected"
+        //                             } else {
+        //                                 "task-item"
+        //                             }
+        //                         }
+        //                         on:click=move |_| select_task(character, message, task_select.clone(), selected_task_id)>
+        //                             <div class="task-item-basic">
+        //                             <div>
+        //                             {
+        //                                 if task.pattern.is_some() {
+        //                                     format!("【定期】{}", task.title.clone())
+        //                                 } else {
+        //                                     format!("【単発】{}", task.title.clone())
+        //                                 }
+        //                             }</div>
+        //                             <div>{task.due_date.clone().unwrap_or("締切未定".into())}</div>
+        //                             </div>
+
+        //                             <div class="task-operation-buttons">
+        //                             <button class="task-delete"
+        //                             on:click=move |e| {
+        //                                 e.stop_propagation();
+        //                                 spawn_local({
+        //                                     let task_id = task_delete.id.clone();
+        //                                     async move {
+        //                                         let request = DeleteTaskRequest {task_id};
+        //                                         let args = serde_wasm_bindgen::to_value(&serde_json::json!({
+        //                                             "dto": &request
+        //                                         })).unwrap();
+        //                                         let result = invoke("delete_task", args).await;
+        //                                         match serde_wasm_bindgen::from_value::<Vec<Task>>(result) {
+        //                                             Ok(current_tasks) => tasks.set(Some(current_tasks)),
+        //                                             Err(e) => logging::log!("{:?}", e)
+        //                                         }
+        //                                     }
+        //                                 });
+
+        //                                 // Reaction
+        //                                 message.set(
+        //                                     Message::new("レーナ".to_string(),  format!("「{}」の依頼をやらないんですね...わかりました。", task_delete.title)
+        //                                 ));
+        //                                 character.set("rena/delete.png".to_string());
+        //                                 set_timeout(
+        //                                     move || {
+        //                                         message.set(Message::new(
+        //                                             "レーナ".to_string(),
+        //                                             format!("ほかに報告したい依頼があれば引き続き伺います!"),
+        //                                         ));
+        //                                         character.set("rena/watching.png".to_string());
+        //                                     },
+        //                                     Duration::from_secs(3),
+        //                                 );
+        //                             }
+        //                         >
+        //                             "依頼削除"
+        //                         </button>
+        //                         <button class="task-complete"
+        //                             on:click=move |e| {
+        //                                 e.stop_propagation();
+
+        //                                 spawn_local({
+        //                                     let task_id = task_complete.id.clone();
+        //                                     async move {
+        //                                         let request = DeleteTaskRequest {task_id};
+        //                                         let args = serde_wasm_bindgen::to_value(&serde_json::json!({
+        //                                             "dto": &request
+        //                                         })).unwrap();
+        //                                         let result = invoke("complete_task", args).await;
+        //                                         match serde_wasm_bindgen::from_value::<Vec<Task>>(result) {
+        //                                             Ok(current_tasks) => tasks.set(Some(current_tasks)),
+        //                                             Err(e) => logging::log!("{:?}", e)
+        //                                         }
+
+        //                                         let result = invoke("get_hardworker", JsValue::NULL).await;
+        //                                         if let Ok(hw) = serde_wasm_bindgen::from_value::<HardWorker>(result) {
+        //                                             logging::log!("ハードワーカーをLOADしました");
+        //                                             hardworker.set(Some(hw));
+        //                                         }
+        //                                     }
+        //                                 });
+        //                                 // reaction
+        //                                 message.set(
+        //                                     Message::new("レーナ".to_string(),  format!("「{}」の依頼を完了しましたね！おめでとうございます！", task_complete.title)
+        //                                 ));
+        //                                 character.set("rena/congrats.png".to_string());
+        //                                 set_timeout(
+        //                                     move || {
+        //                                         message.set(Message::new(
+        //                                             "レーナ".to_string(),
+        //                                             format!("ほかに報告したい依頼があれば引き続き伺います!"),
+        //                                         ));
+        //                                         character.set("rena/watching.png".to_string());
+        //                                     },
+        //                                     Duration::from_secs(3),
+        //                                 );
+        //                             }
+        //                         >
+        //                             "達成報告"
+        //                         </button>
+        //                         </div>
+
+        //                         </div>
+        //                 }
+        //             }
+        //             />
+        //         </div>
+        //     </div>
+
         </div>
+        // タスク一覧終了
     </div>
 
 

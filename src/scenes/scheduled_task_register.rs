@@ -5,12 +5,15 @@ use crate::components::menu_bar::MenuBarComponent;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
 use crate::models::message::Message;
-use crate::models::task::Task;
+use crate::models::task::{Task, TaskCreateDTO};
 use leptos::task::spawn_local;
 use leptos::{logging, prelude::*};
 use wasm_bindgen::prelude::*;
 
-use crate::models::scheduled_task::{PatternDTO, ScheduledTaskDTO};
+// use crate::models::scheduled_task::{PatternDTO, ScheduledTaskDTO};
+
+use crate::models::task::SchedulePattern;
+use crate::models::task::ScheduledTaskDTO;
 
 #[derive(Clone, Debug, PartialEq)]
 enum RepeatType {
@@ -51,34 +54,40 @@ pub fn ScheduledTaskRegisterScene(
     let submit_scheduled_task = move |_| {
         // パターンごとのDTO生成
         let pattern = match repeat_type.get() {
-            RepeatType::Monthly => PatternDTO::Monthly {
+            RepeatType::Monthly => SchedulePattern::Monthly {
                 day: day_of_month.get(),
                 time: time.get(),
             },
-            RepeatType::Weekly => PatternDTO::Weekly {
+            RepeatType::Weekly => SchedulePattern::Weekly {
                 weekday: weekday.get(),
                 time: time.get(),
             },
-            RepeatType::Daily => PatternDTO::Daily { time: time.get() },
+            RepeatType::Daily => SchedulePattern::Daily { time: time.get() },
         };
 
-        let dto = ScheduledTaskDTO {
-            title: title.get(),
-            description: description.get(),
-            pattern,
-        };
+        let new_task = TaskCreateDTO::new(
+            title.get(),
+            if description.get().is_empty() {
+                None
+            } else {
+                Some(description.get())
+            },
+            None,
+        );
+
+        let dto = ScheduledTaskDTO::new(new_task, pattern);
 
         spawn_local(async move {
             let args = serde_wasm_bindgen::to_value(&serde_json::json!({ "dto": dto })).unwrap();
             let result = invoke("save_scheduled_task", args).await;
-            if let Ok(task) = serde_wasm_bindgen::from_value::<Task>(result) {
-                // タスクの新規登録
-                tasks.update(|opt| {
-                    if let Some(list) = opt {
-                        list.push(task.clone());
-                    }
-                });
-            }
+            // if let Ok(task) = serde_wasm_bindgen::from_value::<Task>(result) {
+            //     // タスクの新規登録
+            //     tasks.update(|opt| {
+            //         if let Some(list) = opt {
+            //             list.push(task.clone());
+            //         }
+            //     });
+            // }
         });
 
         message.set(Message::new(

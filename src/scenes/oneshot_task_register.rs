@@ -37,20 +37,19 @@ pub fn OneShotTaskRegisterScene(
     let due_date = RwSignal::new(String::new());
 
     let submit_task = move |_| {
-        let new_task = TaskCreateDTO {
-            title: title.get(),
-            description: if description.get().is_empty() {
+        let new_task = TaskCreateDTO::new(
+            title.get(),
+            if description.get().is_empty() {
                 None
             } else {
                 Some(description.get())
             },
-            rank: "C".to_string(), // とりあえずランクは仮
-            due_date: if due_date.get().is_empty() {
+            if due_date.get().is_empty() {
                 None
             } else {
                 Some(due_date.get())
             },
-        };
+        );
 
         spawn_local(async move {
             let args = serde_wasm_bindgen::to_value(&serde_json::json!({

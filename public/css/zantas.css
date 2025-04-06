@@ -150,6 +150,13 @@ body {
 }
 
 /* タスク一覧 */
+.task-list-main {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
 .task-list-window {
     position: absolute;
     width: 400px;
