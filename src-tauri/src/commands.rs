@@ -172,6 +172,47 @@ pub fn delete_task_from_file(
     Ok(tasks)
 }
 
+#[tauri::command]
+pub fn delete_scheduled_task(
+    app: AppHandle,
+    dto: DeleteTaskRequest,
+) -> Result<Vec<ScheduledTask>, String> {
+    let tasks = delete_scheduled_task_from_file(&app, &dto)?;
+
+    Ok(tasks)
+}
+
+pub fn delete_scheduled_task_from_file(
+    app: &AppHandle,
+    dto: &DeleteTaskRequest,
+) -> Result<Vec<ScheduledTask>, String> {
+    let path = app
+        .path()
+        .resolve("zantas/scheduled_tasks.json", BaseDirectory::AppData)
+        .map_err(|e| e.to_string())?;
+
+    if !path.exists() {
+        return Err("タスクファイルが存在しません。".to_string());
+    }
+
+    let json = std::fs::read_to_string(&path).map_err(|e| e.to_string())?;
+    let mut tasks: Vec<ScheduledTask> = serde_json::from_str(&json).map_err(|e| e.to_string())?;
+
+    let target_id = Uuid::parse_str(&dto.task_id).map_err(|e| e.to_string())?;
+    let before_count = tasks.len();
+
+    tasks.retain(|task| task.id != target_id);
+
+    if tasks.len() == before_count {
+        return Err("該当するタスクが見つかりませんでした。".to_string());
+    }
+
+    let new_json = serde_json::to_string_pretty(&tasks).map_err(|e| e.to_string())?;
+    std::fs::write(&path, new_json).map_err(|e| e.to_string())?;
+
+    Ok(tasks)
+}
+
 // -----------------------------
 // タスク読み込み
 // -----------------------------
@@ -179,6 +220,12 @@ pub fn delete_task_from_file(
 #[tauri::command]
 pub fn get_tasks(app: AppHandle) -> Result<Vec<Task>, String> {
     let tasks = load_tasks(&app)?;
+    Ok(tasks)
+}
+
+#[tauri::command]
+pub fn get_scheduled_tasks(app: AppHandle) -> Result<Vec<ScheduledTask>, String> {
+    let tasks = load_scheduled_tasks(&app)?;
     Ok(tasks)
 }
 
@@ -195,6 +242,23 @@ fn load_tasks(app: &AppHandle) -> Result<Vec<Task>, String> {
 
     let json = std::fs::read_to_string(&path).map_err(|e| e.to_string())?;
     let tasks: Vec<Task> = serde_json::from_str(&json).map_err(|e| e.to_string())?;
+
+    Ok(tasks)
+}
+
+fn load_scheduled_tasks(app: &AppHandle) -> Result<Vec<ScheduledTask>, String> {
+    let path = app
+        .path()
+        .resolve("zantas/scheduled_tasks.json", BaseDirectory::AppData)
+        .map_err(|e| e.to_string())?;
+
+    if !path.exists() {
+        // 初回は空でいい
+        return Ok(vec![]);
+    }
+
+    let json = std::fs::read_to_string(&path).map_err(|e| e.to_string())?;
+    let tasks: Vec<ScheduledTask> = serde_json::from_str(&json).map_err(|e| e.to_string())?;
 
     Ok(tasks)
 }

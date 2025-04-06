@@ -1,17 +1,17 @@
 use std::time::Duration;
 
 use crate::models::hard_worker::HardWorker;
-use crate::models::task::Task;
+use crate::models::task::{ScheduledTask, Task};
 use crate::scenes::finish::FinishScene;
 use crate::scenes::guild::GuildScene;
 use crate::scenes::oneshot_task_register::OneShotTaskRegisterScene;
 use crate::scenes::register::RegisterScene;
+use crate::scenes::scheduled_task_list::ScheduledTaskListScene;
 use crate::scenes::scheduled_task_register::ScheduledTaskRegisterScene;
 use crate::scenes::start::StartScene;
 use crate::scenes::status::StatusScene;
 use crate::scenes::task_list::TaskListScene;
 use crate::scenes::task_register::TaskRegisterScene;
-use shared::dto::task::TaskResponse;
 
 use leptos::task::{self, spawn_local};
 use leptos::{logging, prelude::*};
@@ -34,6 +34,7 @@ pub enum Scene {
     ScheduleTaskRegister,
     OneShotTaskRegister,
     TaskList,
+    ScheduledTaskList,
     Status,
 }
 
@@ -46,8 +47,10 @@ pub fn App() -> impl IntoView {
 
     let hardworker = RwSignal::new(None::<HardWorker>);
     let tasks = RwSignal::new(None::<Vec<Task>>);
+    let schduled_tasks = RwSignal::new(None::<Vec<ScheduledTask>>);
+
     spawn_local({
-        let hardworker = hardworker.clone();
+        // let hardworker = hardworker.clone();
         async move {
             let result = invoke("get_hardworker", JsValue::NULL).await;
             if let Ok(hw) = serde_wasm_bindgen::from_value::<HardWorker>(result) {
@@ -57,20 +60,38 @@ pub fn App() -> impl IntoView {
     });
 
     spawn_local({
-        let tasks = tasks.clone();
+        // let tasks = tasks.clone();
         async move {
             let result = invoke("get_tasks", JsValue::NULL).await;
 
             if let Ok(loaded) = serde_wasm_bindgen::from_value::<Vec<Task>>(result) {
-                logging::log!("LOADしました");
+                logging::log!("get_tasksLOADしました");
 
                 logging::log!("{:?}", loaded);
 
                 tasks.set(Some(loaded));
             } else {
-                logging::log!("LOADしてない");
+                logging::log!("get_tasksLOADしてない");
 
                 tasks.set(Some(vec![]));
+            }
+        }
+    });
+
+    spawn_local({
+        async move {
+            let result = invoke("get_scheduled_tasks", JsValue::NULL).await;
+
+            if let Ok(loaded) = serde_wasm_bindgen::from_value::<Vec<ScheduledTask>>(result) {
+                logging::log!("get_scheduled_tasksLOADしました");
+
+                logging::log!("{:?}", loaded);
+
+                schduled_tasks.set(Some(loaded));
+            } else {
+                logging::log!("get_scheduled_tasksLOADしてない");
+
+                schduled_tasks.set(Some(vec![]));
             }
         }
     });
@@ -120,13 +141,19 @@ pub fn App() -> impl IntoView {
                 <Show
                 when=move || scene.get() == Scene::ScheduleTaskRegister
                 fallback=|| ()>
-                    <ScheduledTaskRegisterScene hardworker=hardworker scene=scene tasks=tasks/>
+                    <ScheduledTaskRegisterScene hardworker=hardworker scene=scene tasks=schduled_tasks/>
                 </Show>
 
                 <Show
                 when=move || scene.get() == Scene::TaskList
                 fallback=|| ()>
                     <TaskListScene scene=scene hardworker=hardworker tasks=tasks/>
+                </Show>
+
+                <Show
+                when=move || scene.get() == Scene::ScheduledTaskList
+                fallback=|| ()>
+                    <ScheduledTaskListScene scene=scene hardworker=hardworker tasks=schduled_tasks/>
                 </Show>
 
 

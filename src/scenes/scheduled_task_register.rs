@@ -5,7 +5,7 @@ use crate::components::menu_bar::MenuBarComponent;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
 use crate::models::message::Message;
-use crate::models::task::{Task, TaskCreateDTO};
+use crate::models::task::{ScheduledTask, TaskCreateDTO};
 use leptos::task::spawn_local;
 use leptos::{logging, prelude::*};
 use wasm_bindgen::prelude::*;
@@ -13,7 +13,7 @@ use wasm_bindgen::prelude::*;
 // use crate::models::scheduled_task::{PatternDTO, ScheduledTaskDTO};
 
 use crate::models::task::SchedulePattern;
-use crate::models::task::ScheduledTaskDTO;
+use crate::models::task::ScheduledTaskCreateDTO;
 
 #[derive(Clone, Debug, PartialEq)]
 enum RepeatType {
@@ -32,7 +32,7 @@ extern "C" {
 pub fn ScheduledTaskRegisterScene(
     scene: RwSignal<Scene>,
     hardworker: RwSignal<Option<HardWorker>>,
-    tasks: RwSignal<Option<Vec<Task>>>,
+    tasks: RwSignal<Option<Vec<ScheduledTask>>>,
 ) -> impl IntoView {
     let character = RwSignal::new("rena/hearing.png".to_string());
     let message = RwSignal::new(Message::new(
@@ -75,19 +75,19 @@ pub fn ScheduledTaskRegisterScene(
             None,
         );
 
-        let dto = ScheduledTaskDTO::new(new_task, pattern);
+        let dto = ScheduledTaskCreateDTO::new(new_task, pattern);
 
         spawn_local(async move {
             let args = serde_wasm_bindgen::to_value(&serde_json::json!({ "dto": dto })).unwrap();
             let result = invoke("save_scheduled_task", args).await;
-            // if let Ok(task) = serde_wasm_bindgen::from_value::<Task>(result) {
-            //     // タスクの新規登録
-            //     tasks.update(|opt| {
-            //         if let Some(list) = opt {
-            //             list.push(task.clone());
-            //         }
-            //     });
-            // }
+            if let Ok(task) = serde_wasm_bindgen::from_value::<ScheduledTask>(result) {
+                // タスクの新規登録
+                tasks.update(|opt| {
+                    if let Some(list) = opt {
+                        list.push(task.clone());
+                    }
+                });
+            }
         });
 
         message.set(Message::new(

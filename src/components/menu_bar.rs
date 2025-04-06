@@ -17,6 +17,11 @@ pub fn MenuBarComponent(scene: RwSignal<Scene>) -> impl IntoView {
                 <span>"依頼一覧"</span>
             </button>
 
+            <button class="menu-button" on:click=move |_| scene.set(Scene::ScheduledTaskList)>
+                <img src="public/assets/logo/scheduled_task_register_icon.png" />
+                <span>"定期一覧"</span>
+            </button>
+
             <button class="menu-button" on:click=move |_| scene.set(Scene::TaskRegister)>
                 <img src="public/assets/logo/task_register_icon.png"/>
                 <span>"依頼登録"</span>
