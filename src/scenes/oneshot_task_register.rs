@@ -8,6 +8,7 @@ use crate::models::message::Message;
 use crate::models::task::{Task, TaskCreateDTO};
 use leptos::prelude::*;
 use leptos::task::{self, spawn_local};
+use shared::dto::task::{CreateTaskRequest, TaskResponse};
 
 use wasm_bindgen::prelude::*;
 

@@ -11,6 +11,7 @@ use crate::scenes::start::StartScene;
 use crate::scenes::status::StatusScene;
 use crate::scenes::task_list::TaskListScene;
 use crate::scenes::task_register::TaskRegisterScene;
+use shared::dto::task::TaskResponse;
 
 use leptos::task::{self, spawn_local};
 use leptos::{logging, prelude::*};
@@ -59,9 +60,16 @@ pub fn App() -> impl IntoView {
         let tasks = tasks.clone();
         async move {
             let result = invoke("get_tasks", JsValue::NULL).await;
+
             if let Ok(loaded) = serde_wasm_bindgen::from_value::<Vec<Task>>(result) {
+                logging::log!("LOADしました");
+
+                logging::log!("{:?}", loaded);
+
                 tasks.set(Some(loaded));
             } else {
+                logging::log!("LOADしてない");
+
                 tasks.set(Some(vec![]));
             }
         }
@@ -112,7 +120,7 @@ pub fn App() -> impl IntoView {
                 <Show
                 when=move || scene.get() == Scene::ScheduleTaskRegister
                 fallback=|| ()>
-                    <ScheduledTaskRegisterScene hardworker=hardworker scene=scene/>
+                    <ScheduledTaskRegisterScene hardworker=hardworker scene=scene tasks=tasks/>
                 </Show>
 
                 <Show

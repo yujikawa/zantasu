@@ -9,6 +9,7 @@ use crate::models::message::Message;
 use crate::models::task::{DeleteTaskRequest, Task};
 use leptos::task::{self, spawn_local};
 use leptos::{logging, prelude::*};
+use shared::dto::task::TaskResponse;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -24,7 +25,7 @@ pub fn TaskListScene(
     tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
     let character = RwSignal::new("rena/watching.png".to_string());
-    let task_count = RwSignal::new(tasks.get().unwrap().len());
+    let selected_task_id = RwSignal::new(None::<String>);
 
     let message = RwSignal::new(Message::new(
         "レーナ".to_string(),
@@ -34,7 +35,14 @@ pub fn TaskListScene(
         ),
     ));
 
-    fn select_task(character: RwSignal<String>, message: RwSignal<Message>, selected_task: Task) {
+    fn select_task(
+        character: RwSignal<String>,
+        message: RwSignal<Message>,
+        selected_task: Task,
+        selected_task_id: RwSignal<Option<String>>,
+    ) {
+        selected_task_id.set(Some(selected_task.id.clone()));
+
         let new_text = match selected_task.description {
             Some(description) => {
                 character.set("rena/explain_task.png".to_string());
@@ -84,16 +92,30 @@ pub fn TaskListScene(
                         let task_complete = task.clone();
 
                         view! {
-                            <div class="task-item"
-                            on:click=move |_| select_task(character, message, task_select.clone())
-                            >
+                            <div class=move || {
+                                if selected_task_id.get() == Some(task.id.clone()) {
+                                    "task-item task-selected"
+                                } else {
+                                    "task-item"
+                                }
+                            }
+                            on:click=move |_| select_task(character, message, task_select.clone(), selected_task_id)>
                                 <div class="task-item-basic">
-                                <div>{task.title.clone()}</div>
+                                <div>
+                                {
+                                    if task.pattern.is_some() {
+                                        format!("【定期】{}", task.title.clone())
+                                    } else {
+                                        format!("【単発】{}", task.title.clone())
+                                    }
+                                }</div>
                                 <div>{task.due_date.clone().unwrap_or("締切未定".into())}</div>
                                 </div>
+
                                 <div class="task-operation-buttons">
                                 <button class="task-delete"
-                                on:click=move |_| {
+                                on:click=move |e| {
+                                    e.stop_propagation();
                                     spawn_local({
                                         let task_id = task_delete.id.clone();
                                         async move {
@@ -129,7 +151,9 @@ pub fn TaskListScene(
                                 "依頼削除"
                             </button>
                             <button class="task-complete"
-                                on:click=move |_| {
+                                on:click=move |e| {
+                                    e.stop_propagation();
+
                                     spawn_local({
                                         let task_id = task_complete.id.clone();
                                         async move {

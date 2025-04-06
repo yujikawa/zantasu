@@ -5,6 +5,7 @@ use crate::components::menu_bar::MenuBarComponent;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
 use crate::models::message::Message;
+use crate::models::task::Task;
 use leptos::task::spawn_local;
 use leptos::{logging, prelude::*};
 use wasm_bindgen::prelude::*;
@@ -13,7 +14,6 @@ use crate::models::scheduled_task::{PatternDTO, ScheduledTaskDTO};
 
 #[derive(Clone, Debug, PartialEq)]
 enum RepeatType {
-    OneTime,
     Monthly,
     Weekly,
     Daily,
@@ -29,6 +29,7 @@ extern "C" {
 pub fn ScheduledTaskRegisterScene(
     scene: RwSignal<Scene>,
     hardworker: RwSignal<Option<HardWorker>>,
+    tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
     let character = RwSignal::new("rena/hearing.png".to_string());
     let message = RwSignal::new(Message::new(
@@ -41,7 +42,7 @@ pub fn ScheduledTaskRegisterScene(
 
     let title = RwSignal::new(String::new());
     let description = RwSignal::new(String::new());
-    let repeat_type = RwSignal::new(RepeatType::OneTime);
+    let repeat_type = RwSignal::new(RepeatType::Monthly);
     let datetime = RwSignal::new(String::new());
     let day_of_month = RwSignal::new(1u32);
     let weekday = RwSignal::new(1u32); // 月曜
@@ -50,9 +51,6 @@ pub fn ScheduledTaskRegisterScene(
     let submit_scheduled_task = move |_| {
         // パターンごとのDTO生成
         let pattern = match repeat_type.get() {
-            RepeatType::OneTime => PatternDTO::OneTime {
-                datetime: datetime.get(),
-            },
             RepeatType::Monthly => PatternDTO::Monthly {
                 day: day_of_month.get(),
                 time: time.get(),
@@ -72,7 +70,15 @@ pub fn ScheduledTaskRegisterScene(
 
         spawn_local(async move {
             let args = serde_wasm_bindgen::to_value(&serde_json::json!({ "dto": dto })).unwrap();
-            let _ = invoke("save_scheduled_task", args).await;
+            let result = invoke("save_scheduled_task", args).await;
+            if let Ok(task) = serde_wasm_bindgen::from_value::<Task>(result) {
+                // タスクの新規登録
+                tasks.update(|opt| {
+                    if let Some(list) = opt {
+                        list.push(task.clone());
+                    }
+                });
+            }
         });
 
         message.set(Message::new(
@@ -129,14 +135,12 @@ pub fn ScheduledTaskRegisterScene(
                         <select
                         on:change=move |e| {
                             match event_target_value(&e).as_str() {
-                                "OneTime" => repeat_type.set(RepeatType::OneTime),
                                 "Monthly" => repeat_type.set(RepeatType::Monthly),
                                 "Weekly" => repeat_type.set(RepeatType::Weekly),
                                 "Daily" => repeat_type.set(RepeatType::Daily),
                                 _ => {},
                             }
                         }>
-                            <option value="OneTime">"1回だけ"</option>
                             <option value="Monthly">"毎月"</option>
                             <option value="Weekly">"毎週"</option>
                             <option value="Daily">"毎日"</option>
@@ -144,14 +148,6 @@ pub fn ScheduledTaskRegisterScene(
                     </div>
 
                     // === パターン別の入力 ===
-                    <Show when=move || repeat_type.get() == RepeatType::OneTime>
-                        <div class="scheduled-task-form-input">
-                            <label>"日時（例: 2025-04-20T10:00）"</label>
-                            <input type="datetime-local"
-                            prop:value=move || datetime.get()
-                            on:input=move |e| datetime.set(event_target_value(&e)) />
-                        </div>
-                    </Show>
 
                     <Show when=move || repeat_type.get() == RepeatType::Monthly>
                         <div class="scheduled-task-form-input">

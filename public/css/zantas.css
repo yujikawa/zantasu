@@ -192,6 +192,12 @@ body {
     transition: background 0.2s;
 }
 
+.task-selected {
+    background: rgba(225, 201, 22, 0.2);
+    border: 1px solid #eac73f;
+    border-radius: 6px;
+}
+
 .task-item-basic {
     display: flex;
     flex-direction: column;

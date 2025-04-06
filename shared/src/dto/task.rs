@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Deserialize, Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 #[serde(tag = "pattern_type")]
 pub enum Pattern {
-    OneTime { datetime: String },
     Monthly { day: u32, time: String },
     Weekly { weekday: u32, time: String },
     Daily { time: String },
@@ -13,7 +12,6 @@ pub enum Pattern {
 pub struct CreateTaskRequest {
     pub title: String,
     pub description: Option<String>,
-    pub rank: String,
     pub due_date: Option<String>,
     pub pattern: Option<Pattern>,
 }
@@ -28,7 +26,6 @@ pub struct TaskResponse {
     pub id: String,
     pub title: String,
     pub description: Option<String>,
-    pub rank: String,
     pub due_date: Option<String>,
     pub pattern: Option<Pattern>,
 }

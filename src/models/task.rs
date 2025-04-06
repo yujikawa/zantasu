@@ -27,12 +27,11 @@ impl TaskCreateDTO {
 #[derive(Deserialize, Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Task {
     pub id: String,
-    pub title: String,               // 必須
-    pub description: Option<String>, // 任意
-    pub rank: String,                // 必須
-    pub due_date: Option<String>,    // 任意
+    pub title: String,
+    pub description: Option<String>,
+    pub due_date: Option<String>,
+    pub pattern: Option<shared::dto::task::Pattern>,
 }
-
 
 #[derive(Serialize)]
 pub struct DeleteTaskRequest {
