@@ -573,3 +573,91 @@ body {
     border: 2px dotted #aaa;
     border-radius: 50%;
 }
+
+/* 転生する */
+
+.select-reincarnate-type {
+    position: absolute;
+    bottom: 450px;
+    left: 300px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
+}
+
+.select-reincarnate-no-button {
+    display: inline-block;
+    width: 200px;
+    height: 100px;
+    padding: 12px;
+    margin: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    /* 半透明黒 */
+    border: 2px solid #88f;
+    /* 魔法っぽい淡い青 */
+    border-radius: 12px;
+    color: #fff;
+    font-family: "serif", sans-serif;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: inset 0 0 5px rgba(136, 136, 255, 0.5);
+}
+
+.select-reincarnate-no-button:hover {
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 10px #88f, inset 0 0 10px #88f;
+    transform: scale(1.05);
+}
+
+.select-reincarnate-no-button:active {
+    transform: scale(0.98);
+    box-shadow: 0 0 5px #88f, inset 0 0 5px #88f;
+}
+
+.select-reincarnate-yes-button {
+    display: inline-block;
+    width: 200px;
+    height: 100px;
+    padding: 12px;
+    margin: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid rgb(243, 208, 9);
+    border-radius: 12px;
+    color: #fff;
+    font-family: "serif", sans-serif;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: inset 0 0 5px rgb(243, 208, 9);
+}
+
+.select-reincarnate-yes-button:hover {
+    background: rgba(98, 106, 4, 0.8);
+    box-shadow: 0 0 10px rgb(243, 208, 9), inset 0 0 10px rgb(243, 208, 9);
+    transform: scale(1.05);
+}
+
+.select-reincarnate-yes-button:active {
+    transform: scale(0.98);
+    box-shadow: 0 0 5px rgb(243, 208, 9), inset 0 0 5px rgb(243, 208, 9);
+}
+
+.fade-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: white;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 2s ease;
+    z-index: 2000;
+}
+
+.fade-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 2000;
+
+}

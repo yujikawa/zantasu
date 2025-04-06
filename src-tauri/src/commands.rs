@@ -29,6 +29,30 @@ fn notify_message(app: &AppHandle, title: String, message: String) -> Result<(),
 }
 
 #[tauri::command]
+pub fn reset(app: AppHandle) -> Result<(), String> {
+    delete_json_file(&app, "tasks.json".to_string())?;
+    delete_json_file(&app, "hardworker.json".to_string())?;
+    delete_json_file(&app, "scheduled_tasks.json".to_string())?;
+
+    Ok(())
+}
+
+pub fn delete_json_file(app: &AppHandle, filename: String) -> Result<(), String> {
+    // 例: "zantas/tasks.json" のようにファイル名を受け取る
+    let path = app
+        .path()
+        .resolve(&format!("zantas/{}", filename), BaseDirectory::AppData)
+        .map_err(|e| e.to_string())?;
+
+    // ファイルが存在していれば削除
+    if path.exists() {
+        std::fs::remove_file(&path).map_err(|e| format!("削除失敗: {}", e))?;
+    }
+
+    Ok(())
+}
+
+#[tauri::command]
 pub fn save_hardworker(app: AppHandle, name: String) -> Result<HardWorker, String> {
     let path = app
         .path()

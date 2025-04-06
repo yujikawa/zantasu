@@ -6,6 +6,7 @@ use crate::scenes::finish::FinishScene;
 use crate::scenes::guild::GuildScene;
 use crate::scenes::oneshot_task_register::OneShotTaskRegisterScene;
 use crate::scenes::register::RegisterScene;
+use crate::scenes::reincarnate::ReincarnateScene;
 use crate::scenes::scheduled_task_list::ScheduledTaskListScene;
 use crate::scenes::scheduled_task_register::ScheduledTaskRegisterScene;
 use crate::scenes::start::StartScene;
@@ -36,6 +37,7 @@ pub enum Scene {
     TaskList,
     ScheduledTaskList,
     Status,
+    Reincarnate,
 }
 
 #[component]
@@ -177,6 +179,12 @@ pub fn App() -> impl IntoView {
                 when=move || scene.get() == Scene::Status
                 fallback=|| ()>
                     <StatusScene scene=scene hardworker=hardworker tasks=tasks/>
+                </Show>
+
+                <Show
+                when=move || scene.get() == Scene::Reincarnate
+                fallback=|| ()>
+                    <ReincarnateScene scene=scene hardworker=hardworker tasks=tasks/>
                 </Show>
         </Show>
 
