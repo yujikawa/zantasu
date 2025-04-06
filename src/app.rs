@@ -4,6 +4,7 @@ use crate::models::hard_worker::HardWorker;
 use crate::models::task::Task;
 use crate::scenes::finish::FinishScene;
 use crate::scenes::guild::GuildScene;
+use crate::scenes::oneshot_task_register::OneShotTaskRegisterScene;
 use crate::scenes::register::RegisterScene;
 use crate::scenes::scheduled_task_register::ScheduledTaskRegisterScene;
 use crate::scenes::start::StartScene;
@@ -30,6 +31,7 @@ pub enum Scene {
     Finish,
     TaskRegister,
     ScheduleTaskRegister,
+    OneShotTaskRegister,
     TaskList,
     Status,
 }
@@ -99,6 +101,12 @@ pub fn App() -> impl IntoView {
                 when=move || scene.get() == Scene::TaskRegister
                 fallback=|| ()>
                     <TaskRegisterScene hardworker=hardworker scene=scene tasks=tasks/>
+                </Show>
+
+                <Show
+                when=move || scene.get() == Scene::OneShotTaskRegister
+                fallback=|| ()>
+                    <OneShotTaskRegisterScene hardworker=hardworker scene=scene tasks=tasks/>
                 </Show>
 
                 <Show

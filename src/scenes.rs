@@ -6,3 +6,4 @@ pub mod status;
 pub mod task_list;
 pub mod task_register;
 pub mod scheduled_task_register;
+pub mod oneshot_task_register;

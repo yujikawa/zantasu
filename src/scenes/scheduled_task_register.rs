@@ -184,6 +184,7 @@ pub fn ScheduledTaskRegisterScene(
 
 
                 <div style="margin-top: 20px;">
+                    <button style="background:rgba(220, 90, 90, 0.7);margin-right:10px;" on:click=move |_| scene.set(Scene::TaskRegister)>"依頼選択に戻る"</button>
                     <button style="background:rgba(90, 180, 120, 0.7);" on:click=submit_scheduled_task>
                         "定期依頼を登録"
                     </button>
