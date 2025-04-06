@@ -17,7 +17,6 @@ extern "C" {
     async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 }
 
-
 #[component]
 pub fn OneShotTaskRegisterScene(
     scene: RwSignal<Scene>,
@@ -32,8 +31,6 @@ pub fn OneShotTaskRegisterScene(
             hardworker.get().unwrap().name
         ),
     ));
-    let task_count = RwSignal::new(tasks.get().unwrap().len());
-
     let title = RwSignal::new(String::new());
     let description = RwSignal::new(String::new());
     let due_date = RwSignal::new(String::new());
@@ -100,27 +97,6 @@ pub fn OneShotTaskRegisterScene(
         // === 背景 ===
         <img src="public/assets/backgrounds/guild_inside.png"
             class="zentas-bg" />
-
-            // === 掲示板 ===
-            <Show
-            when=move || task_count.get() !=0
-            fallback=|| ()>
-
-            <img src="public/assets/objects/board_with_paper.png"
-                style="position: absolute; left: 50px; top: 140px; width: 500px;"
-                />
-
-            </Show>
-
-            <Show
-            when=move || task_count.get() == 0
-            fallback=|| ()>
-
-            <img src="public/assets/objects/board.png"
-                style="position: absolute; left: 50px; top: 140px; width: 500px;"
-                />
-
-            </Show>
 
         // === 受付嬢（立ち絵） ===
         <img src={move || format!("public/assets/characters/{}", character.get())}

@@ -73,29 +73,29 @@ pub fn ScheduledTaskRegisterScene(
         spawn_local(async move {
             let args = serde_wasm_bindgen::to_value(&serde_json::json!({ "dto": dto })).unwrap();
             let _ = invoke("save_scheduled_task", args).await;
-
-            message.set(Message::new(
-                "レーナ".to_string(),
-                format!("定期依頼「{}」を登録しました！", title.get()),
-            ));
-            character.set("rena/register_success.png".to_string());
-
-            set_timeout(
-                move || {
-                    message.set(Message::new(
-                        "レーナ".to_string(),
-                        "他に定期的な業務はありますか？".to_string(),
-                    ));
-                    character.set("rena/hearing.png".to_string());
-                },
-                Duration::from_secs(2),
-            );
-
-            title.set("".to_string());
-            description.set("".to_string());
-            datetime.set("".to_string());
-            time.set("09:00".to_string());
         });
+
+        message.set(Message::new(
+            "レーナ".to_string(),
+            format!("定期依頼「{}」を登録しました！", title.get()),
+        ));
+        character.set("rena/register_success.png".to_string());
+
+        set_timeout(
+            move || {
+                message.set(Message::new(
+                    "レーナ".to_string(),
+                    "他に定期的な業務はありますか？".to_string(),
+                ));
+                character.set("rena/hearing.png".to_string());
+            },
+            Duration::from_secs(2),
+        );
+
+        title.set("".to_string());
+        description.set("".to_string());
+        datetime.set("".to_string());
+        time.set("09:00".to_string());
     };
 
     view! {
@@ -112,19 +112,22 @@ pub fn ScheduledTaskRegisterScene(
                 <div class="scheduled-task-form-input-list">
                     <div class="scheduled-task-form-input">
                         <label>"依頼タイトル（必須）"</label>
-                        <input placeholder="例: 定例会議" on:input=move |e| title.set(event_target_value(&e)) />
+                        <input
+                        prop:value=move || title.get()
+                        placeholder="例: OO王の謁見" on:input=move |e| title.set(event_target_value(&e)) />
                     </div>
                     <div class="scheduled-task-form-input">
-                    <label>"依頼詳細（任意）"</label>
-                    <textarea
-                    placeholder="例: 西の森で発生中" on:input=move |e| description.set(event_target_value(&e))>
-                    {move || description.get()}
-                    </textarea>
+                        <label>"依頼詳細（任意）"</label>
+                        <textarea
+                            prop:value=move || description.get()
+                            placeholder="例: 西の森で発生中" on:input=move |e| description.set(event_target_value(&e))>
+                        </textarea>
                     </div>
 
                     <div class="scheduled-task-form-input">
                         <label>"繰り返しタイプ"</label>
-                        <select on:change=move |e| {
+                        <select
+                        on:change=move |e| {
                             match event_target_value(&e).as_str() {
                                 "OneTime" => repeat_type.set(RepeatType::OneTime),
                                 "Monthly" => repeat_type.set(RepeatType::Monthly),
@@ -144,40 +147,52 @@ pub fn ScheduledTaskRegisterScene(
                     <Show when=move || repeat_type.get() == RepeatType::OneTime>
                         <div class="scheduled-task-form-input">
                             <label>"日時（例: 2025-04-20T10:00）"</label>
-                            <input type="datetime-local" on:input=move |e| datetime.set(event_target_value(&e)) />
+                            <input type="datetime-local"
+                            prop:value=move || datetime.get()
+                            on:input=move |e| datetime.set(event_target_value(&e)) />
                         </div>
                     </Show>
 
                     <Show when=move || repeat_type.get() == RepeatType::Monthly>
                         <div class="scheduled-task-form-input">
                             <label>"毎月何日？（1〜31）"</label>
-                            <input type="number" min="1" max="31" on:input=move |e| {
+                            <input type="number" min="1" max="31"
+                            prop:value=move || day_of_month.get()
+                            on:input=move |e| {
                                 if let Ok(val) = event_target_value(&e).parse::<u32>() {
                                     day_of_month.set(val);
                                 }
                             } />
                             <label>"何時？（例: 10:00）"</label>
-                            <input type="time" on:input=move |e| time.set(event_target_value(&e)) />
+                            <input type="time"
+                            prop:value=move || time.get()
+                            on:input=move |e| time.set(event_target_value(&e)) />
                         </div>
                     </Show>
 
                     <Show when=move || repeat_type.get() == RepeatType::Weekly>
                         <div class="scheduled-task-form-input">
                             <label>"曜日（0=日〜6=土）"</label>
-                            <input type="number" min="0" max="6" on:input=move |e| {
+                            <input type="number" min="0" max="6"
+                            prop:value=move || weekday.get()
+                            on:input=move |e| {
                                 if let Ok(val) = event_target_value(&e).parse::<u32>() {
                                     weekday.set(val);
                                 }
                             } />
                             <label>"何時？"</label>
-                            <input type="time" on:input=move |e| time.set(event_target_value(&e)) />
+                            <input type="time"
+                            prop:value=move || time.get()
+                            on:input=move |e| time.set(event_target_value(&e)) />
                         </div>
                     </Show>
 
                     <Show when=move || repeat_type.get() == RepeatType::Daily>
                         <div class="scheduled-task-form-input">
                             <label>"何時？"</label>
-                            <input type="time" on:input=move |e| time.set(event_target_value(&e)) />
+                            <input type="time"
+                            prop:value=move || time.get()
+                            on:input=move |e| time.set(event_target_value(&e)) />
                         </div>
                     </Show>
                 </div>
