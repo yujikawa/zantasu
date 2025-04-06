@@ -1,7 +1,4 @@
-# Tauri + Leptos
+# 残業したくないので、タスク管理はじめました。
+![title](./public/assets/logo/title.png)
 
-This template should help get you started developing with Tauri and Leptos.
-
-## Recommended IDE Setup
-
-[VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer).
+異世界風アニメにビジュアル全振りの低機能タスク管理アプリです。
