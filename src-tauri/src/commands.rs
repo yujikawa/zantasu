@@ -51,7 +51,7 @@ fn save_hardworker_json(path: &PathBuf, hw: &HardWorker) -> Result<(), String> {
 
 #[tauri::command]
 pub fn get_hardworker(app: AppHandle) -> Result<HardWorker, String> {
-    let mut hw: HardWorker = load_hardworker(&app)?;
+    let hw: HardWorker = load_hardworker(&app)?;
     Ok(hw)
 }
 
