@@ -48,6 +48,22 @@ pub fn App() -> impl IntoView {
     let hardworker = RwSignal::new(None::<HardWorker>);
     let tasks = RwSignal::new(None::<Vec<Task>>);
     let schduled_tasks = RwSignal::new(None::<Vec<ScheduledTask>>);
+    set_interval(
+        move || {
+            spawn_local(async move {
+                let result = invoke("check_scheduled_tasks", JsValue::NULL).await;
+                if let Ok(add_tasks) = serde_wasm_bindgen::from_value::<Vec<Task>>(result) {
+                    tasks.update(|opt| {
+                        if let Some(list) = opt {
+                            list.extend(add_tasks.clone());
+                        }
+                    });
+                }
+                logging::log!("定期依頼の確認を行いました！");
+            });
+        },
+        Duration::from_secs(60),
+    );
 
     spawn_local({
         // let hardworker = hardworker.clone();

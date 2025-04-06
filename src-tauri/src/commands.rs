@@ -2,18 +2,40 @@ use crate::models::hard_worker::HardWorker;
 use crate::models::task::{
     DeleteTaskRequest, ScheduledTask, ScheduledTaskCreateDTO, Task, TaskCreateDTO,
 };
+use once_cell::sync::OnceCell;
 use std::path::PathBuf;
+use std::sync::RwLock;
 use tauri::{path::BaseDirectory, AppHandle, Manager};
 use tauri_plugin_notification::NotificationExt;
 use uuid::Uuid;
 
+static SCHEDULED_TASK_CACHE: OnceCell<RwLock<Vec<ScheduledTask>>> = OnceCell::new();
+
+// === 3. 初期化または取得 ===
+fn get_scheduled_tasks_cached(app: &AppHandle) -> Result<Vec<ScheduledTask>, String> {
+    let cache = SCHEDULED_TASK_CACHE.get_or_init(|| {
+        let tasks = load_scheduled_tasks(app).unwrap_or_default();
+        RwLock::new(tasks)
+    });
+    let guard = cache.read().unwrap();
+    Ok(guard.clone())
+}
+
+// === 4. キャッシュ更新（保存後など） ===
+fn update_scheduled_task_cache(tasks: Vec<ScheduledTask>) {
+    if let Some(lock) = SCHEDULED_TASK_CACHE.get() {
+        let mut guard = lock.write().unwrap();
+        *guard = tasks;
+    }
+}
+
 #[tauri::command]
 pub fn notify(app: AppHandle, title: String, message: String) -> Result<(), String> {
-    notify_message(app, title, message)?;
+    notify_message(&app, title, message)?;
     Ok(())
 }
 
-fn notify_message(app: AppHandle, title: String, message: String) -> Result<(), String> {
+fn notify_message(app: &AppHandle, title: String, message: String) -> Result<(), String> {
     let _ = app
         .notification()
         .builder()
@@ -21,19 +43,6 @@ fn notify_message(app: AppHandle, title: String, message: String) -> Result<(), 
         .body(&message)
         .show()
         .map_err(|e| e.to_string())?;
-    Ok(())
-}
-#[tauri::command]
-pub fn check_due_date_notify(app: AppHandle) -> Result<(), String> {
-    let tasks = load_tasks(&app)?;
-    for task in &tasks {
-        if let Some(due_date) = task.due_date {
-            let now = chrono::Local::now().date_naive();
-            let term = due_date - now;
-            let days = term.num_days().max(0);
-            if days == 3 {}
-        }
-    }
     Ok(())
 }
 
@@ -275,7 +284,9 @@ pub fn save_scheduled_task(
 
     std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
 
-    let new_schedule_task = ScheduledTask::new(dto.task.clone(), dto.pattern);
+    let new_task = Task::new(dto.task.title, dto.task.description, None);
+
+    let new_schedule_task = ScheduledTask::new(new_task, dto.pattern);
 
     // // 既存の定期タスクを読み込む
     let mut list: Vec<ScheduledTask> = if path.exists() {
@@ -293,6 +304,76 @@ pub fn save_scheduled_task(
     std::fs::write(&path, json).map_err(|e| e.to_string())?;
 
     Ok(new_schedule_task)
+}
+
+#[tauri::command]
+pub fn check_scheduled_tasks(app: AppHandle) -> Result<Vec<Task>, String> {
+    let now = chrono::Local::now().naive_local();
+    let mut scheduled_tasks = load_scheduled_tasks(&app)?;
+
+    let mut tasks_to_add = vec![];
+
+    for scheduled in &mut scheduled_tasks {
+        if scheduled.should_trigger(now) {
+            let new_task = Task::new(
+                scheduled.task.title.clone(),
+                scheduled.task.description.clone(),
+                Some(now.date()), // または due_date ロジック
+            );
+            tasks_to_add.push(new_task);
+            scheduled.last_triggered = Some(now.date());
+            notify_message(
+                &app,
+                "定期依頼登録のお知らせ".to_string(),
+                "定期依頼を登録しました。一覧を再読み込みして確認ください。".to_string(),
+            )?;
+        }
+    }
+
+    if !tasks_to_add.is_empty() {
+        save_new_tasks(&app, tasks_to_add.clone())?;
+        save_scheduled_tasks(&app, scheduled_tasks)?; // last_triggered の更新
+    }
+
+    Ok(tasks_to_add.clone())
+}
+
+fn save_new_tasks(app: &AppHandle, new_tasks: Vec<Task>) -> Result<Vec<Task>, String> {
+    let path = app
+        .path()
+        .resolve("zantas/tasks.json", BaseDirectory::AppData)
+        .map_err(|e| e.to_string())?;
+
+    let mut all_tasks: Vec<Task> = if path.exists() {
+        let json = std::fs::read_to_string(&path).map_err(|e| e.to_string())?;
+        serde_json::from_str(&json).map_err(|e| e.to_string())?
+    } else {
+        vec![]
+    };
+
+    all_tasks.extend(new_tasks);
+
+    let new_json = serde_json::to_string_pretty(&all_tasks).map_err(|e| e.to_string())?;
+    std::fs::write(&path, new_json).map_err(|e| e.to_string())?;
+
+    Ok(all_tasks)
+}
+
+fn save_scheduled_tasks(
+    app: &AppHandle,
+    new_scheduled_tasks: Vec<ScheduledTask>,
+) -> Result<(), String> {
+    let path = app
+        .path()
+        .resolve("zantas/scheduled_tasks.json", BaseDirectory::AppData)
+        .map_err(|e| e.to_string())?;
+
+    std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
+
+    let json = serde_json::to_string_pretty(&new_scheduled_tasks).map_err(|e| e.to_string())?;
+    std::fs::write(&path, json).map_err(|e| e.to_string())?;
+
+    Ok(())
 }
 
 #[tauri::command]

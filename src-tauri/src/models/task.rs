@@ -1,7 +1,7 @@
-use chrono::NaiveDate;
+use chrono::{Datelike, NaiveDate, NaiveDateTime, NaiveTime, Timelike};
 use serde::{Deserialize, Serialize};
-use tauri::utils::pattern;
 use uuid::Uuid;
+
 #[derive(Deserialize, Serialize, Clone)]
 #[serde(tag = "pattern_type")]
 pub enum SchedulePattern {
@@ -46,18 +46,85 @@ impl Task {
 #[derive(Deserialize, Serialize, Clone)]
 pub struct ScheduledTask {
     pub id: Uuid,
-    pub task: TaskCreateDTO,
+    pub task: Task,
     pub pattern: SchedulePattern,
     pub last_triggered: Option<NaiveDate>,
 }
 
 impl ScheduledTask {
-    pub fn new(task: TaskCreateDTO, pattern: SchedulePattern) -> Self {
+    pub fn new(task: Task, pattern: SchedulePattern) -> Self {
         Self {
             id: Uuid::new_v4(),
             task,
             pattern,
             last_triggered: None,
+        }
+    }
+
+    pub fn should_trigger(&self, now: NaiveDateTime) -> bool {
+        match &self.pattern {
+            SchedulePattern::OneTime { datetime } => {
+                if let Ok(scheduled_time) =
+                    NaiveDateTime::parse_from_str(datetime, "%Y-%m-%dT%H:%M")
+                {
+                    if self.last_triggered.is_some() {
+                        return false; // 一度だけ実行済み
+                    }
+                    return now >= scheduled_time;
+                }
+                false
+            }
+
+            SchedulePattern::Monthly { day, time } => {
+                if now.day() != *day {
+                    return false;
+                }
+
+                if let Some(last) = self.last_triggered {
+                    if last.month() == now.month() && last.year() == now.year() {
+                        return false; // 今月実行済み
+                    }
+                }
+
+                if let Ok(target_time) = NaiveTime::parse_from_str(time, "%H:%M") {
+                    now.time() >= target_time
+                } else {
+                    false
+                }
+            }
+
+            SchedulePattern::Weekly { weekday, time } => {
+                if now.weekday().num_days_from_sunday() != *weekday {
+                    return false;
+                }
+
+                if let Some(last) = self.last_triggered {
+                    let same_week = now.iso_week() == last.iso_week() && now.year() == last.year();
+                    if same_week {
+                        return false; // 今週実行済み
+                    }
+                }
+
+                if let Ok(target_time) = NaiveTime::parse_from_str(time, "%H:%M") {
+                    now.time() >= target_time
+                } else {
+                    false
+                }
+            }
+
+            SchedulePattern::Daily { time } => {
+                if let Some(last) = self.last_triggered {
+                    if last == now.date() {
+                        return false; // 今日実行済み
+                    }
+                }
+
+                if let Ok(target_time) = NaiveTime::parse_from_str(time, "%H:%M") {
+                    now.time() >= target_time
+                } else {
+                    false
+                }
+            }
         }
     }
 }

@@ -26,6 +26,7 @@ pub fn run() {
             commands::delete_task,
             commands::delete_scheduled_task,
             commands::get_scheduled_tasks,
+            commands::check_scheduled_tasks,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
