@@ -11,24 +11,6 @@ use uuid::Uuid;
 
 static SCHEDULED_TASK_CACHE: OnceCell<RwLock<Vec<ScheduledTask>>> = OnceCell::new();
 
-// === 3. 初期化または取得 ===
-fn get_scheduled_tasks_cached(app: &AppHandle) -> Result<Vec<ScheduledTask>, String> {
-    let cache = SCHEDULED_TASK_CACHE.get_or_init(|| {
-        let tasks = load_scheduled_tasks(app).unwrap_or_default();
-        RwLock::new(tasks)
-    });
-    let guard = cache.read().unwrap();
-    Ok(guard.clone())
-}
-
-// === 4. キャッシュ更新（保存後など） ===
-fn update_scheduled_task_cache(tasks: Vec<ScheduledTask>) {
-    if let Some(lock) = SCHEDULED_TASK_CACHE.get() {
-        let mut guard = lock.write().unwrap();
-        *guard = tasks;
-    }
-}
-
 #[tauri::command]
 pub fn notify(app: AppHandle, title: String, message: String) -> Result<(), String> {
     notify_message(&app, title, message)?;
@@ -187,6 +169,7 @@ pub fn delete_scheduled_task(
     dto: DeleteTaskRequest,
 ) -> Result<Vec<ScheduledTask>, String> {
     let tasks = delete_scheduled_task_from_file(&app, &dto)?;
+    update_scheduled_task_cache(tasks.clone());
 
     Ok(tasks)
 }
@@ -302,14 +285,33 @@ pub fn save_scheduled_task(
     // 保存
     let json = serde_json::to_string_pretty(&list).map_err(|e| e.to_string())?;
     std::fs::write(&path, json).map_err(|e| e.to_string())?;
-
+    update_scheduled_task_cache(list);
     Ok(new_schedule_task)
 }
 
+// 定期チェック
+// === 初期化または取得 ===
+fn get_scheduled_tasks_cached(app: &AppHandle) -> Result<Vec<ScheduledTask>, String> {
+    let cache = SCHEDULED_TASK_CACHE.get_or_init(|| {
+        let tasks = load_scheduled_tasks(app).unwrap_or_default();
+        RwLock::new(tasks)
+    });
+    let guard = cache.read().unwrap();
+    Ok(guard.clone())
+}
+
+// === キャッシュ更新（保存後など） ===
+fn update_scheduled_task_cache(tasks: Vec<ScheduledTask>) {
+    if let Some(lock) = SCHEDULED_TASK_CACHE.get() {
+        let mut guard = lock.write().unwrap();
+        *guard = tasks;
+    }
+}
 #[tauri::command]
 pub fn check_scheduled_tasks(app: AppHandle) -> Result<Vec<Task>, String> {
     let now = chrono::Local::now().naive_local();
-    let mut scheduled_tasks = load_scheduled_tasks(&app)?;
+    // let mut scheduled_tasks = load_scheduled_tasks(&app)?;
+    let mut scheduled_tasks = get_scheduled_tasks_cached(&app)?;
 
     let mut tasks_to_add = vec![];
 
@@ -332,6 +334,7 @@ pub fn check_scheduled_tasks(app: AppHandle) -> Result<Vec<Task>, String> {
 
     if !tasks_to_add.is_empty() {
         save_new_tasks(&app, tasks_to_add.clone())?;
+        update_scheduled_task_cache(scheduled_tasks.clone());
         save_scheduled_tasks(&app, scheduled_tasks)?; // last_triggered の更新
     }
 
