@@ -481,7 +481,7 @@ body {
     position: absolute;
     right: 0px;
     bottom: 0;
-    height: 300px;
+    height: 200px;
     animation: fade-in 1s;
     animation-fill-mode: forwards;
     z-index: 100;
@@ -492,7 +492,9 @@ body {
     top: 380px;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 400px;
+    width: 650px;
+    /* ←ちょっと小さく */
+    /* ← 横長に拡張 */
     height: 500px;
     padding: 20px;
     background: rgba(0, 0, 50, 0.7);
@@ -503,8 +505,34 @@ body {
     font-family: 'serif';
     backdrop-filter: blur(1px);
     z-index: 90;
+    overflow-x: hidden;
+    /* ← これ大事！ */
+    overflow-y: auto;
+    -webkit-app-region: no-drag;
 }
 
+/* 新しく追加：2カラム用のflexレイアウト */
+.status-content {
+    display: flex;
+    gap: 24px;
+    justify-content: space-between;
+}
+
+/* 左カラム：画像＋チャートなど */
+.status-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 12px;
+}
+
+/* 右カラム：テキスト情報 */
+.status-right {
+    flex: 1;
+}
+
+/* タイトル */
 .status-list {
     font-size: 18px;
     margin-bottom: 15px;
@@ -512,23 +540,26 @@ body {
     text-shadow: 0 0 5px #88f;
 }
 
+/* 各項目 */
 .status-item {
     margin-bottom: 12px;
+    text-align: left;
 }
 
 .status-item label {
     display: block;
     text-align: left;
     font-weight: bold;
-    font-size: 14px;
-    margin-bottom: 4px;
+    font-size: 12px;
+    margin-bottom: 2px;
 }
 
 .status-item p {
     text-align: center;
-    font-size: 16px;
+    font-size: 14px;
 }
 
+/* 吹き出し */
 .thought-bubble {
     position: absolute;
     bottom: 600px;
@@ -537,10 +568,8 @@ body {
     max-width: 250px;
     padding: 12px 18px;
     background: rgba(255, 255, 255, 0.8);
-    /* 白くて少し透ける */
     color: #333;
     border: 2px dotted #aaa;
-    /* グレー系点線 */
     border-radius: 25px;
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
     font-family: 'serif';
@@ -548,7 +577,6 @@ body {
     text-align: center;
 }
 
-/* 1個目（大きめ） */
 .thought-bubble::after {
     content: "";
     position: absolute;
@@ -561,7 +589,6 @@ body {
     border-radius: 50%;
 }
 
-/* 2個目（小さめ） */
 .thought-bubble::before {
     content: "";
     position: absolute;
@@ -573,6 +600,48 @@ body {
     border: 2px dotted #aaa;
     border-radius: 50%;
 }
+
+/* 職業カード */
+.job-profile-card {
+    background: none;
+    /* ← 背景消す */
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    color: #fff;
+    text-align: left;
+    font-family: 'serif';
+}
+
+.job-profile-card .job-icon {
+    width: 32px;
+    height: 32px;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.job-profile-card h2 {
+    display: inline;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fffc9e;
+    margin: 0;
+    text-shadow: 0 0 4px #ffaa00;
+}
+
+.job-profile-card h3 {
+    font-size: 14px;
+    color: #ccc;
+    margin: 4px 0;
+}
+
+.job-profile-card p {
+    font-size: 13px;
+    color: #ccc;
+    margin: 4px 0;
+    text-align: left;
+}
+
 
 /* 転生する */
 
