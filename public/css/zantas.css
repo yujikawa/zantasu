@@ -661,3 +661,8 @@ body {
     z-index: 2000;
 
 }
+
+.magic-blast {
+    mask-image: linear-gradient(to right, transparent, black 60%);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 60%);
+}

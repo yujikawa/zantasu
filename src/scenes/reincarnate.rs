@@ -23,8 +23,9 @@ pub fn ReincarnateScene(
     tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
     let show_overlay = RwSignal::new(false);
+    let is_shot = RwSignal::new(false);
 
-    let receptionist = RwSignal::new("rena/reincarnate.png".to_string());
+    let receptionist = RwSignal::new("rena/reincarnate0.png".to_string());
     let message = RwSignal::new(Message::new(
         "レーナ".to_string(),
         format!(
@@ -37,6 +38,8 @@ pub fn ReincarnateScene(
         spawn_local(async move {
             let result = invoke("reset", JsValue::NULL).await;
             if let Ok(_) = serde_wasm_bindgen::from_value::<()>(result) {
+                is_shot.set(true);
+                receptionist.set("rena/reincarnate1.png".to_string());
                 show_overlay.set(true);
 
                 set_timeout(
@@ -66,8 +69,9 @@ pub fn ReincarnateScene(
                 <BoardComponent tasks=tasks/>
 
                 // === 受付嬢（立ち絵） ===
-                <img src={move || format!("public/assets/characters/{}", receptionist.get())}
-                class="zentas-person" />
+                <img
+                src={move || format!("public/assets/characters/{}", receptionist.get())}
+                class={move || if is_shot.get() { "zentas-person magic-blast" } else { "zentas-person"} } />
         // === セリフウィンドウ ===
         <WindowMessage message={ message }/>
 

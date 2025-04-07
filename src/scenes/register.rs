@@ -19,7 +19,7 @@ fn register(
 ) {
     spawn_local(async move {
         let args = serde_wasm_bindgen::to_value(&serde_json::json!({
-            "name": name.get()
+            "name": if name.get() == "" { "ななし".to_string() } else { name.get() }
         }))
         .unwrap();
         // let hw = HardWorker::new(name.get());
