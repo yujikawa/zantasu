@@ -38,7 +38,7 @@ pub fn RegisterScene(
     hardworker: RwSignal<Option<HardWorker>>,
 ) -> impl IntoView {
     let message = RwSignal::new(
-        Message::new("レーナ".to_string(), "初めての方ですね？まずはハードワーカー登録が必要なのでこちらに名前を記入してください。お手元の魔道具、打鍵石で入力できますよ。登録後はFランクからのスタートとなります。タスクをこなせばランクがあがりますので頑張ってくださいね！"
+        Message::new("ギルド受付嬢".to_string(), "初めての方ですね？まずはハードワーカー登録が必要なのでこちらに名前を記入してください。お手元の魔道具、打鍵石で入力できますよ。登録後はFランクからのスタートとなります。タスクをこなせばランクがあがりますので頑張ってくださいね！"
             .to_string())
     );
     let name = RwSignal::new("".to_string());
@@ -49,7 +49,7 @@ pub fn RegisterScene(
             <img src="public/assets/backgrounds/guild_day.png"
                 class="zantas-bg" />
 
-            <img src="public/assets/characters/rena/register.png"
+            <img src="public/assets/characters/receptionist/register.png"
                 class="zantas-person" />
 
             <div style="position: absolute; top:200px; left:50px; padding:10px; width:400px; height:200px; background:rgba(31, 29, 29, 0.7);  border: 2px solid #ffffff;

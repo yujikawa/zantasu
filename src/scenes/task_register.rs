@@ -24,9 +24,9 @@ pub fn TaskRegisterScene(
     hardworker: RwSignal<Option<HardWorker>>,
     tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
-    let character = RwSignal::new("rena/explain.png".to_string());
+    let character = RwSignal::new("receptionist/explain.png".to_string());
     let message = RwSignal::new(Message::new(
-        "レーナ".to_string(),
+        "ギルド受付嬢".to_string(),
         format!(
             "{}さん、依頼は２種類あります。単発の依頼と定期的に発生する依頼とありますのでまずは選択してください。",
             hardworker.get().unwrap().name

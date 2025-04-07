@@ -34,9 +34,9 @@ pub fn ScheduledTaskRegisterScene(
     hardworker: RwSignal<Option<HardWorker>>,
     tasks: RwSignal<Option<Vec<ScheduledTask>>>,
 ) -> impl IntoView {
-    let character = RwSignal::new("rena/hearing.png".to_string());
+    let character = RwSignal::new("receptionist/hearing.png".to_string());
     let message = RwSignal::new(Message::new(
-        "レーナ".to_string(),
+        "ギルド受付嬢".to_string(),
         format!(
             "{}さん、定期業務の登録ですね。繰り返しタイプと時刻を指定してください。",
             hardworker.get().unwrap().name
@@ -91,18 +91,18 @@ pub fn ScheduledTaskRegisterScene(
         });
 
         message.set(Message::new(
-            "レーナ".to_string(),
+            "ギルド受付嬢".to_string(),
             format!("定期依頼「{}」を登録しました！", title.get()),
         ));
-        character.set("rena/register_success.png".to_string());
+        character.set("receptionist/register_success.png".to_string());
 
         set_timeout(
             move || {
                 message.set(Message::new(
-                    "レーナ".to_string(),
+                    "ギルド受付嬢".to_string(),
                     "他に定期的な業務はありますか？".to_string(),
                 ));
-                character.set("rena/hearing.png".to_string());
+                character.set("receptionist/hearing.png".to_string());
             },
             Duration::from_secs(2),
         );

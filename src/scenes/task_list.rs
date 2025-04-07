@@ -24,11 +24,11 @@ pub fn TaskListScene(
     hardworker: RwSignal<Option<HardWorker>>,
     tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
-    let character = RwSignal::new("rena/watching.png".to_string());
+    let character = RwSignal::new("receptionist/watching.png".to_string());
     let selected_task_id = RwSignal::new(None::<String>);
 
     let message = RwSignal::new(Message::new(
-        "レーナ".to_string(),
+        "ギルド受付嬢".to_string(),
         format!(
             "{}さんへの依頼が確認できます。依頼が完了したら忘れずに報告してくださいね！",
             hardworker.get().unwrap().name
@@ -45,16 +45,16 @@ pub fn TaskListScene(
 
         let new_text = match selected_task.description {
             Some(description) => {
-                character.set("rena/explain_task.png".to_string());
+                character.set("receptionist/explain_task.png".to_string());
                 format!("依頼の詳細は..{}ということみたいです！", description)
             }
             None => {
-                character.set("rena/explain_task_confused.png".to_string());
+                character.set("receptionist/explain_task_confused.png".to_string());
                 format!("依頼の詳細は..無いみたいですね..")
             }
         };
 
-        let new_message = Message::new("レーナ".to_string(), new_text);
+        let new_message = Message::new("ギルド受付嬢".to_string(), new_text);
 
         message.set(new_message);
     }
@@ -127,16 +127,16 @@ pub fn TaskListScene(
 
                                         // Reaction
                                         message.set(
-                                            Message::new("レーナ".to_string(),  format!("「{}」の依頼をやらないんですね...わかりました。", task_delete.title)
+                                            Message::new("ギルド受付嬢".to_string(),  format!("「{}」の依頼をやらないんですね...わかりました。", task_delete.title)
                                         ));
-                                        character.set("rena/delete.png".to_string());
+                                        character.set("receptionist/delete.png".to_string());
                                         set_timeout(
                                             move || {
                                                 message.set(Message::new(
-                                                    "レーナ".to_string(),
+                                                    "ギルド受付嬢".to_string(),
                                                     format!("ほかに報告したい依頼があれば引き続き伺います!"),
                                                 ));
-                                                character.set("rena/watching.png".to_string());
+                                                character.set("receptionist/watching.png".to_string());
                                             },
                                             Duration::from_secs(3),
                                         );
@@ -170,16 +170,16 @@ pub fn TaskListScene(
                                         });
                                         // reaction
                                         message.set(
-                                            Message::new("レーナ".to_string(),  format!("「{}」の依頼を完了しましたね！おめでとうございます！", task_complete.title)
+                                            Message::new("ギルド受付嬢".to_string(),  format!("「{}」の依頼を完了しましたね！おめでとうございます！", task_complete.title)
                                         ));
-                                        character.set("rena/congrats.png".to_string());
+                                        character.set("receptionist/congrats.png".to_string());
                                         set_timeout(
                                             move || {
                                                 message.set(Message::new(
-                                                    "レーナ".to_string(),
+                                                    "ギルド受付嬢".to_string(),
                                                     format!("ほかに報告したい依頼があれば引き続き伺います!"),
                                                 ));
-                                                character.set("rena/watching.png".to_string());
+                                                character.set("receptionist/watching.png".to_string());
                                             },
                                             Duration::from_secs(3),
                                         );

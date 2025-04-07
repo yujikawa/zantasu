@@ -24,11 +24,11 @@ pub fn ScheduledTaskListScene(
     hardworker: RwSignal<Option<HardWorker>>,
     tasks: RwSignal<Option<Vec<ScheduledTask>>>,
 ) -> impl IntoView {
-    let character = RwSignal::new("rena/watching.png".to_string());
+    let character = RwSignal::new("receptionist/watching.png".to_string());
     let selected_task_id = RwSignal::new(None::<String>);
 
     let message = RwSignal::new(Message::new(
-        "レーナ".to_string(),
+        "ギルド受付嬢".to_string(),
         format!(
             "{}さんへの定期依頼の設定が確認できます。定期依頼が不要な場合は設定を削除してくださいね",
             hardworker.get().unwrap().name
@@ -45,16 +45,16 @@ pub fn ScheduledTaskListScene(
 
         let new_text = match selected_task.task.description {
             Some(description) => {
-                character.set("rena/explain_task.png".to_string());
+                character.set("receptionist/explain_task.png".to_string());
                 format!("依頼の詳細は..{}ということみたいです！", description)
             }
             None => {
-                character.set("rena/explain_task_confused.png".to_string());
+                character.set("receptionist/explain_task_confused.png".to_string());
                 format!("依頼の詳細は..無いみたいですね..")
             }
         };
 
-        let new_message = Message::new("レーナ".to_string(), new_text);
+        let new_message = Message::new("ギルド受付嬢".to_string(), new_text);
 
         message.set(new_message);
     }
@@ -126,16 +126,16 @@ pub fn ScheduledTaskListScene(
 
                                         // Reaction
                                         message.set(
-                                            Message::new("レーナ".to_string(),  format!("「{}」の定期依頼を削除しました！", task_delete.task.title)
+                                            Message::new("ギルド受付嬢".to_string(),  format!("「{}」の定期依頼を削除しました！", task_delete.task.title)
                                         ));
-                                        character.set("rena/delete.png".to_string());
+                                        character.set("receptionist/delete.png".to_string());
                                         set_timeout(
                                             move || {
                                                 message.set(Message::new(
-                                                    "レーナ".to_string(),
+                                                    "ギルド受付嬢".to_string(),
                                                     format!("ほかに調整したい定期依頼があれば引き続き伺います!"),
                                                 ));
-                                                character.set("rena/watching.png".to_string());
+                                                character.set("receptionist/watching.png".to_string());
                                             },
                                             Duration::from_secs(3),
                                         );

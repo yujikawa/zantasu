@@ -8,5 +8,5 @@ ZANTASKギルドでハードワーカー登録すればタスク管理を行え�
 
 
 いろいろ嫌になったらすべてのデータを消す禁忌魔法、転生を行えます。
-<img src="./public/assets/characters/rena/reincarnate.png" style="width: 300px">
+<img src="./public/assets/characters/receptionist/reincarnate.png" style="width: 300px">
 </center>

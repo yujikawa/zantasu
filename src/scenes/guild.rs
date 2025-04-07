@@ -13,7 +13,7 @@ pub fn GuildScene(
     hardworker: RwSignal<Option<HardWorker>>,
     tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
-    let receptionist = RwSignal::new("rena/normal.png".to_string());
+    let receptionist = RwSignal::new("receptionist/normal.png".to_string());
     let task_count = RwSignal::new(tasks.get().unwrap().len());
 
     let welcome_message = if task_count.get() == 0 {
@@ -28,7 +28,7 @@ pub fn GuildScene(
             task_count.get(),
         )
     };
-    let message = RwSignal::new(Message::new("レーナ".to_string(), welcome_message));
+    let message = RwSignal::new(Message::new("ギルド受付嬢".to_string(), welcome_message));
 
     view! {
         <main>

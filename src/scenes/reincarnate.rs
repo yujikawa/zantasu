@@ -25,9 +25,9 @@ pub fn ReincarnateScene(
     let show_overlay = RwSignal::new(false);
     let is_shot = RwSignal::new(false);
 
-    let receptionist = RwSignal::new("rena/reincarnate0.png".to_string());
+    let receptionist = RwSignal::new("receptionist/reincarnate0.png".to_string());
     let message = RwSignal::new(Message::new(
-        "レーナ".to_string(),
+        "ギルド受付嬢".to_string(),
         format!(
             "{}さん、実は私は禁忌魔術である転生という魔術を使えます。それを使えば転生できます。ただしすべてがリセットになりますが..それでも転生しますか？もし...システム的にバグかな？って思ったら転生しちゃってください",
             hardworker.get().unwrap().name
@@ -39,9 +39,9 @@ pub fn ReincarnateScene(
             let result = invoke("reset", JsValue::NULL).await;
             if let Ok(_) = serde_wasm_bindgen::from_value::<()>(result) {
                 is_shot.set(true);
-                receptionist.set("rena/reincarnate1.png".to_string());
+                receptionist.set("receptionist/reincarnate1.png".to_string());
                 message.set(Message::new(
-                    "レーナ".to_string(),
+                    "ギルド受付嬢".to_string(),
                     format!("リンカーネイション！！はあぁぁぁぁあああああああ！！"),
                 ));
                 show_overlay.set(true);

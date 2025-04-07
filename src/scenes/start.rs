@@ -25,7 +25,7 @@ pub fn StartScene(
             <img src="public/assets/logo/title.png"
                 style="position: absolute; left: 50%; top: 0px; transform: translateX(-50%); width: 400px;" />
 
-            <img src="public/assets/characters/rena/start.png"
+            <img src="public/assets/characters/receptionist/start.png"
             style="position: absolute;right: 50px;bottom: 0;height: 500px;" />
 
             <img src="public/assets/characters/guild_master.png"

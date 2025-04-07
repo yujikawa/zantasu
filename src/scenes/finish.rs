@@ -11,7 +11,7 @@ pub fn FinishScene(
     hardworker: RwSignal<Option<HardWorker>>,
 ) -> impl IntoView {
     let message = RwSignal::new(Message::new(
-        "レーナ".to_string(),
+        "ギルド受付嬢".to_string(),
         format!(
             "{}さん、今日もお疲れさまでした！またお仕事がんばってください！",
             hardworker.get().unwrap().name
@@ -25,7 +25,7 @@ pub fn FinishScene(
             <img src="public/assets/backgrounds/guild_outside2.png"
                 class="zantas-bg" />
 
-                <img src="public/assets/characters/rena/bye.png"
+                <img src="public/assets/characters/receptionist/bye.png"
                     class="zantas-person" />
 
             <WindowMessage message=message />

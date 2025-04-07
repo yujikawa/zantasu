@@ -24,9 +24,9 @@ pub fn OneShotTaskRegisterScene(
     hardworker: RwSignal<Option<HardWorker>>,
     tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
-    let character = RwSignal::new("rena/hearing.png".to_string());
+    let character = RwSignal::new("receptionist/hearing.png".to_string());
     let message = RwSignal::new(Message::new(
-        "レーナ".to_string(),
+        "ギルド受付嬢".to_string(),
         format!(
             "{}さん、依頼の内容を教えてください。私のほうで依頼書を書きますので。",
             hardworker.get().unwrap().name
@@ -68,18 +68,18 @@ pub fn OneShotTaskRegisterScene(
         });
 
         message.set(Message::new(
-            "レーナ".to_string(),
+            "ギルド受付嬢".to_string(),
             format!("「{}」を登録しました！", title.get()),
         ));
-        character.set("rena/register_success.png".to_string());
+        character.set("receptionist/register_success.png".to_string());
 
         set_timeout(
             move || {
                 message.set(Message::new(
-                    "レーナ".to_string(),
+                    "ギルド受付嬢".to_string(),
                     format!("ほかに依頼があれば引き続き伺います!"),
                 ));
-                character.set("rena/hearing.png".to_string());
+                character.set("receptionist/hearing.png".to_string());
             },
             Duration::from_secs(2),
         );

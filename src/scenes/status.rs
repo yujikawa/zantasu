@@ -82,7 +82,7 @@ pub fn StatusScene(
             "何をみているんだろう..?"
         </div>
 
-        <img src="public/assets/characters/rena/curious.png"
+        <img src="public/assets/characters/receptionist/curious.png"
             class="zantas-left-person"/>
         // === セリフウィンドウ ===
         <WindowMessage message={message}/>
