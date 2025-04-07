@@ -2,6 +2,7 @@ use std::time::Duration;
 
 use crate::app::Scene;
 use crate::components::board::BoardComponent;
+use crate::components::edit_task_mordal::EditTaslMordalComponent;
 use crate::components::menu_bar::MenuBarComponent;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
@@ -26,6 +27,7 @@ pub fn TaskListScene(
 ) -> impl IntoView {
     let character = RwSignal::new("receptionist/explain1.png".to_string());
     let selected_task_id = RwSignal::new(None::<String>);
+    let selected_edit_task = RwSignal::new(None::<Task>);
 
     let message = RwSignal::new(Message::new(
         "ギルド受付嬢".to_string(),
@@ -34,6 +36,8 @@ pub fn TaskListScene(
             hardworker.get().unwrap().name
         ),
     ));
+
+
 
     fn select_task(
         character: RwSignal<String>,
@@ -89,6 +93,7 @@ pub fn TaskListScene(
                         key=|task| task.clone() // task自体がキー
                         children=move |task| {
                             let task_select = task.clone();
+                            let task_edit = task.clone();
                             let task_delete = task.clone();
                             let task_complete = task.clone();
 
@@ -107,6 +112,10 @@ pub fn TaskListScene(
                                     </div>
 
                                     <div class="task-operation-buttons">
+                                    <button class="task-edit" on:click=move |_| selected_edit_task.set(Some(task_edit.clone()))>
+                                        "編集"
+                                    </button>
+
                                     <button class="task-delete"
                                     on:click=move |e| {
                                         e.stop_propagation();
@@ -199,7 +208,13 @@ pub fn TaskListScene(
         </div>
         // タスク一覧終了
     </div>
+    // 編集モーダルの描画
 
+    <Show
+    when=move || selected_edit_task.get().is_some()
+    fallback=|| ()>
+        <EditTaslMordalComponent tasks=tasks task=selected_edit_task/>
+    </Show>
 
     }
 }

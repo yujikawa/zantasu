@@ -381,7 +381,13 @@ fn save_new_tasks(app: &AppHandle, new_tasks: Vec<Task>) -> Result<Vec<Task>, St
         vec![]
     };
 
-    all_tasks.extend(new_tasks);
+    for new_task in new_tasks {
+        if let Some(existing) = all_tasks.iter_mut().find(|t| t.id == new_task.id) {
+            *existing = new_task;
+        } else {
+            all_tasks.push(new_task);
+        }
+    }
 
     let new_json = serde_json::to_string_pretty(&all_tasks).map_err(|e| e.to_string())?;
     std::fs::write(&path, new_json).map_err(|e| e.to_string())?;
@@ -404,6 +410,47 @@ fn save_scheduled_tasks(
     std::fs::write(&path, json).map_err(|e| e.to_string())?;
 
     Ok(())
+}
+
+// 更新処理
+#[tauri::command]
+pub fn update_task_command(app: AppHandle, task: Task) -> Result<Vec<Task>, String> {
+    update_task(&app, task)
+}
+
+#[tauri::command]
+pub fn update_scheduled_task_command(
+    app: AppHandle,
+    task: ScheduledTask,
+) -> Result<Vec<ScheduledTask>, String> {
+    update_scheduled_task(&app, task)
+}
+pub fn update_task(app: &AppHandle, updated_task: Task) -> Result<Vec<Task>, String> {
+    let mut tasks = load_tasks(&app).map_err(|e| e.to_string())?;
+
+    if let Some(task) = tasks.iter_mut().find(|t| t.id == updated_task.id) {
+        *task = updated_task;
+        let _ = save_new_tasks(&app, tasks.clone()).map_err(|e| e.to_string());
+        return Ok(tasks.clone());
+    } else {
+        Err("Task not found".into())
+    }
+}
+
+pub fn update_scheduled_task(
+    app: &AppHandle,
+    updated_task: ScheduledTask,
+) -> Result<Vec<ScheduledTask>, String> {
+    let mut tasks = load_scheduled_tasks(&app).map_err(|e| e.to_string())?;
+
+    if let Some(task) = tasks.iter_mut().find(|t| t.id == updated_task.id) {
+        *task = updated_task;
+        update_scheduled_task_cache(tasks.clone());
+        let _ = save_scheduled_tasks(&app, tasks.clone()).map_err(|e| e.to_string());
+        return Ok(tasks);
+    } else {
+        Err("ScheduledTask not found".into())
+    }
 }
 
 #[tauri::command]

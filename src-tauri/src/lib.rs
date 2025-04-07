@@ -28,6 +28,8 @@ pub fn run() {
             commands::get_scheduled_tasks,
             commands::check_scheduled_tasks,
             commands::reset,
+            commands::update_task_command,
+            commands::update_scheduled_task_command,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

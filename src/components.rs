@@ -4,3 +4,4 @@ pub mod menu_bar;
 pub mod board;
 pub mod job_profile_card;
 pub mod radar_chart;
+pub mod edit_task_mordal;

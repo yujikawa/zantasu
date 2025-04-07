@@ -227,6 +227,12 @@ body {
     margin-left: 10px;
 }
 
+.task-edit {
+    font-size: 12px;
+    background: rgba(90, 151, 220, 0.7);
+    margin-left: 10px;
+}
+
 
 /* タスク登録フォーム */
 
@@ -734,4 +740,98 @@ body {
 .magic-blast {
     mask-image: linear-gradient(to right, transparent, black 60%);
     -webkit-mask-image: linear-gradient(to right, transparent, black 60%);
+}
+
+/* タスク更新 */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #fdf8ef;
+    border: 2px solid #6b4c3b;
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    font-family: 'Segoe UI', sans-serif;
+    position: relative;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+    color: #3e2d27;
+    text-align: center;
+}
+
+.modal-content input[type="text"],
+.modal-content textarea,
+.modal-content input[type="date"] {
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    border: 1px solid #cbb79d;
+    border-radius: 8px;
+    background-color: #fffaf5;
+    font-size: 1rem;
+    box-sizing: border-box;
+    color: #000;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+}
+
+.modal-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.modal-buttons button:first-child {
+    background-color: #aaa;
+    color: white;
+    
+}
+
+.modal-buttons button:first-child:hover {
+    background-color: #888;
+}
+
+.modal-buttons button:last-child {
+    background-color: #4caf50;
+    color: white;
+}
+
+.modal-buttons button:last-child:hover {
+    background-color: #45a045;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
