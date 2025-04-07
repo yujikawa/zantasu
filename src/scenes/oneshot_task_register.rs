@@ -91,16 +91,16 @@ pub fn OneShotTaskRegisterScene(
 
     view! {
 
-        <div class="zentas-main">
+        <div class="zantas-main">
         <MenuBarComponent scene=scene/>
 
         // === 背景 ===
         <img src="public/assets/backgrounds/guild_inside.png"
-            class="zentas-bg" />
+            class="zantas-bg" />
 
         // === 受付嬢（立ち絵） ===
         <img src={move || format!("public/assets/characters/{}", character.get())}
-            class="zentas-person" />
+            class="zantas-person" />
         // === セリフウィンドウ ===
         <WindowMessage message={ message }/>
 

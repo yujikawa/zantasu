@@ -114,10 +114,10 @@ pub fn ScheduledTaskRegisterScene(
     };
 
     view! {
-        <div class="zentas-main">
+        <div class="zantas-main">
             <MenuBarComponent scene=scene />
-            <img src="public/assets/backgrounds/guild_inside.png" class="zentas-bg" />
-            <img src={move || format!("public/assets/characters/{}", character.get())} class="zentas-person" />
+            <img src="public/assets/backgrounds/guild_inside.png" class="zantas-bg" />
+            <img src={move || format!("public/assets/characters/{}", character.get())} class="zantas-person" />
             <WindowMessage message={message} />
 
             <div class="scheduled-task-form">

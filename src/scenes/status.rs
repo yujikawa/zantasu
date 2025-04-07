@@ -23,11 +23,11 @@ pub fn StatusScene(
     view! {
         <main>
 
-        <div class="zentas-main">
+        <div class="zantas-main">
             <MenuBarComponent scene=scene/>
 
             // === 背景 ===
-            <img src="public/assets/backgrounds/guild_inside.png" class="zentas-bg" />
+            <img src="public/assets/backgrounds/guild_inside.png" class="zantas-bg" />
 
             // === 掲示板 ===
             <BoardComponent tasks=tasks/>
@@ -83,7 +83,7 @@ pub fn StatusScene(
         </div>
 
         <img src="public/assets/characters/rena/curious.png"
-            class="zentas-left-person"/>
+            class="zantas-left-person"/>
         // === セリフウィンドウ ===
         <WindowMessage message={message}/>
 

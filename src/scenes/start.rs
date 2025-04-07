@@ -16,10 +16,10 @@ pub fn StartScene(
     hardworker: RwSignal<Option<HardWorker>>,
 ) -> impl IntoView {
     view! {
-        <div class="zentas-main">
+        <div class="zantas-main">
             // === 背景 ===
             <img src="public/assets/backgrounds/guild_outside.png"
-                class="zentas-bg"/>
+                class="zantas-bg"/>
 
             // === タイトルロゴ ===
             <img src="public/assets/logo/title.png"

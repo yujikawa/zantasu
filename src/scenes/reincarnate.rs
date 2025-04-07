@@ -42,9 +42,7 @@ pub fn ReincarnateScene(
                 receptionist.set("rena/reincarnate1.png".to_string());
                 message.set(Message::new(
                     "レーナ".to_string(),
-                    format!(
-                        "リンカーネイション！！はあぁぁぁぁあああああああ！！"
-                    ),
+                    format!("リンカーネイション！！はあぁぁぁぁあああああああ！！"),
                 ));
                 show_overlay.set(true);
 
@@ -65,11 +63,11 @@ pub fn ReincarnateScene(
     view! {
         <main>
 
-        <div class="zentas-main">
+        <div class="zantas-main">
         <MenuBarComponent scene=scene/>
 
                 // === 背景 ===
-                <img src="public/assets/backgrounds/guild_inside.png" class="zentas-bg" />
+                <img src="public/assets/backgrounds/guild_inside.png" class="zantas-bg" />
 
                 // === 掲示板 ===
                 <BoardComponent tasks=tasks/>
@@ -77,7 +75,7 @@ pub fn ReincarnateScene(
                 // === 受付嬢（立ち絵） ===
                 <img
                 src={move || format!("public/assets/characters/{}", receptionist.get())}
-                class={move || if is_shot.get() { "zentas-person magic-blast" } else { "zentas-person"} } />
+                class={move || if is_shot.get() { "zantas-person magic-blast" } else { "zantas-person"} } />
         // === セリフウィンドウ ===
         <WindowMessage message={ message }/>
 

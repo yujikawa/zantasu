@@ -20,13 +20,13 @@ pub fn FinishScene(
 
     view! {
 
-        <div class="zentas-main">
+        <div class="zantas-main">
             // === 背景 ===
             <img src="public/assets/backgrounds/guild_outside2.png"
-                class="zentas-bg" />
+                class="zantas-bg" />
 
                 <img src="public/assets/characters/rena/bye.png"
-                    class="zentas-person" />
+                    class="zantas-person" />
 
             <WindowMessage message=message />
 
