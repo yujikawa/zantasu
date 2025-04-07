@@ -40,6 +40,12 @@ pub fn ReincarnateScene(
             if let Ok(_) = serde_wasm_bindgen::from_value::<()>(result) {
                 is_shot.set(true);
                 receptionist.set("rena/reincarnate1.png".to_string());
+                message.set(Message::new(
+                    "レーナ".to_string(),
+                    format!(
+                        "リンカーネイション！！はあぁぁぁぁあああああああ！！"
+                    ),
+                ));
                 show_overlay.set(true);
 
                 set_timeout(
@@ -50,7 +56,7 @@ pub fn ReincarnateScene(
                             .reload()
                             .unwrap();
                     },
-                    Duration::from_secs(2),
+                    Duration::from_secs(3),
                 );
             }
         });
