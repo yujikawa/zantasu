@@ -550,13 +550,13 @@ body {
     display: block;
     text-align: left;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 13px;
     margin-bottom: 2px;
 }
 
 .status-item p {
     text-align: center;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 /* 吹き出し */
@@ -622,7 +622,7 @@ body {
 
 .job-profile-card h2 {
     display: inline;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
     color: #fffc9e;
     margin: 0;
@@ -630,7 +630,7 @@ body {
 }
 
 .job-profile-card h3 {
-    font-size: 14px;
+    font-size: 15px;
     color: #ccc;
     margin: 4px 0;
 }
