@@ -24,7 +24,7 @@ pub fn ScheduledTaskListScene(
     hardworker: RwSignal<Option<HardWorker>>,
     tasks: RwSignal<Option<Vec<ScheduledTask>>>,
 ) -> impl IntoView {
-    let character = RwSignal::new("receptionist/watching.png".to_string());
+    let character = RwSignal::new("receptionist/explain2.png".to_string());
     let selected_task_id = RwSignal::new(None::<String>);
 
     let message = RwSignal::new(Message::new(

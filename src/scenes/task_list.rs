@@ -24,7 +24,7 @@ pub fn TaskListScene(
     hardworker: RwSignal<Option<HardWorker>>,
     tasks: RwSignal<Option<Vec<Task>>>,
 ) -> impl IntoView {
-    let character = RwSignal::new("receptionist/watching.png".to_string());
+    let character = RwSignal::new("receptionist/explain1.png".to_string());
     let selected_task_id = RwSignal::new(None::<String>);
 
     let message = RwSignal::new(Message::new(
