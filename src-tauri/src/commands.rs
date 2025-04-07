@@ -346,12 +346,15 @@ pub fn check_scheduled_tasks(app: AppHandle) -> Result<Vec<Task>, String> {
                 scheduled.task.description.clone(),
                 Some(now.date()), // または due_date ロジック
             );
-            tasks_to_add.push(new_task);
+            tasks_to_add.push(new_task.clone());
             scheduled.last_triggered = Some(now.date());
             notify_message(
                 &app,
                 "定期依頼登録のお知らせ".to_string(),
-                "定期依頼を登録しました。一覧を再読み込みして確認ください。".to_string(),
+                format!(
+                    "「{}」の定期依頼を登録しました。依頼一覧確認ください。",
+                    new_task.title
+                ),
             )?;
         }
     }
