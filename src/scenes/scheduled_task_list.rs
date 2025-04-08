@@ -62,7 +62,7 @@ pub fn ScheduledTaskListScene(
             }
         });
         // scheduled_task_form_state.set(ScheduledTaskFormState::new());
-        selected_edit_scheduled_task.set(None);
+        // selected_edit_scheduled_task.set(None);
     };
 
     let character = RwSignal::new("receptionist/explain2.png".to_string());

@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use crate::models::task::{Task, TaskCreateDTO, TaskFormState};
 use leptos::prelude::*;
 use leptos::task::{self, spawn_local};
@@ -23,6 +25,8 @@ where
     F: Fn() + Clone + 'static,
     C: Fn() + Clone + 'static,
 {
+    let save_message = RwSignal::new("");
+
     view! {
 
         <div class="modal-backdrop">
@@ -71,11 +75,20 @@ where
                         "キャンセル"
                     </button>
 
-                    <button on:click=move |_| on_submit()>
+                    <button on:click=move |_| {
+                        on_submit();
+                        save_message.set("保存しました。");
+                        set_timeout(
+                            move || {
+                                save_message.set("")
+                            },
+                            Duration::from_secs(2),
+                        );
+                    }>
                     {submit_label}
                     </button>
                 </div>
-
+                <p style="color: black; font-size: 12px;">{move || save_message.get()}</p>
             </div>
 
 

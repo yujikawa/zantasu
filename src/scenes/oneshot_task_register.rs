@@ -91,56 +91,12 @@ pub fn OneShotTaskRegisterScene(
     };
 
     view! {
-
+        <div class="zantas-main">
+        // === 背景 ===
+        <img src="public/assets/backgrounds/table.png"
+            class="zantas-bg" />
+        </div>
         <OneShotTaskFormComponent task=task_form_state on_submit=on_submit submit_label="依頼登録する" on_cancel=on_cancel />
-    //     <div class="zantas-main">
-    //     <MenuBarComponent scene=scene/>
-
-    //     // === 背景 ===
-    //     <img src="public/assets/backgrounds/guild_inside.png"
-    //         class="zantas-bg" />
-
-    //     // === 受付嬢（立ち絵） ===
-    //     <img src={move || format!("public/assets/characters/{}", character.get())}
-    //         class="zantas-person" />
-    //     // === セリフウィンドウ ===
-    //     <WindowMessage message={ message }/>
-
-    //     //  依頼書
-    //     <div class="task-form">
-    //     <div class="task-list-title">"新しい依頼の登録"</div>
-    //         <div class="task-form-input-list">
-    //             <div class="task-form-input">
-    //                 <label>"依頼タイトル（必須）"</label>
-    //                 <input
-    //                 prop:value=move || title.get()
-    //                 placeholder="例: ゴブリン退治" on:input=move |e| title.set(event_target_value(&e)) />
-    //             </div>
-    //             <div class="task-form-input">
-    //                 <label>"依頼詳細（任意）"</label>
-    //                 <textarea
-    //                 prop:value=move || description.get()
-    //                 placeholder="例: 西の森で発生中" on:input=move |e| description.set(event_target_value(&e))>
-    //                 {move || description.get()}
-    //                 </textarea>
-    //             </div>
-    //             <div class="task-form-input">
-    //                 <label>"締切日（任意）"</label>
-    //                 <input
-    //                 type="date"
-    //                 prop:value=move || due_date.get()
-    //                 placeholder="例: 2025-05-01" on:input=move |e| due_date.set(event_target_value(&e)) />
-    //             </div>
-    //         </div>
-
-    //         <div style="margin-top: 20px;">
-    //             <button style="background:rgba(220, 90, 90, 0.7);margin-right:10px;" on:click=move |_| scene.set(Scene::TaskRegister)>"依頼選択に戻る"</button>
-    //             <button style="background:rgba(90, 180, 120, 0.7);" on:click=submit_task>"単発依頼を登録"</button>
-    //         </div>
-    //     </div>
-
-    // </div>
-
 
     }
 }

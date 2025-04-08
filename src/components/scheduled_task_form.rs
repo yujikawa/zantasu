@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use crate::models::task::{SchedulePattern, ScheduledTaskFormState};
 use leptos::prelude::*;
 
@@ -19,6 +21,8 @@ where
     F: Fn() + Clone + 'static,
     C: Fn() + Clone + 'static,
 {
+    let save_message = RwSignal::new("");
+
     let repeat_type: RwSignal<RepeatType> = RwSignal::new(
         if matches!(form.get().pattern, SchedulePattern::Monthly { .. }) {
             RepeatType::Monthly
@@ -193,11 +197,21 @@ where
                         "キャンセル"
                     </button>
 
-                    <button on:click=move |_| on_submit()>
+                    <button on:click=move |_| {
+                        on_submit();
+                        save_message.set("保存しました。");
+                        set_timeout(
+                            move || {
+                                save_message.set("")
+                            },
+                            Duration::from_secs(2),
+                        );
+                    }>
                         {submit_label}
                     </button>
 
                 </div>
+                <p style="color: black; font-size: 12px;">{move || save_message.get()}</p>
 
             // mordal
             </div>

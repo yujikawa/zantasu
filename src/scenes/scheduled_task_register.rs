@@ -69,6 +69,12 @@ pub fn ScheduledTaskRegisterScene(
     };
 
     view! {
+    <div class="zantas-main">
+        // === 背景 ===
+        <img src="public/assets/backgrounds/table.png"
+            class="zantas-bg" />
+    </div>
+
     <ScheduledTaskModalComponent form=scheduled_task_form_state on_submit=on_submit submit_label="定期依頼の登録" on_cancel=on_cancel/>
     }
 }

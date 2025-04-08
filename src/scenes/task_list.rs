@@ -54,7 +54,7 @@ pub fn TaskListScene(
             if let Ok(new_tasks) = serde_wasm_bindgen::from_value::<Vec<Task>>(result) {
                 // タスクの新規登録
                 tasks.set(Some(new_tasks));
-                selected_edit_task.set(None);
+                // selected_edit_task.set(None);
             }
         });
     };
