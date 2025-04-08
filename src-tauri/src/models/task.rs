@@ -44,15 +44,32 @@ impl Task {
 }
 
 #[derive(Deserialize, Serialize, Clone)]
+pub struct TaskTemplate {
+    pub title: String,               // 必須
+    pub description: Option<String>, // 任意
+    pub due_date: Option<NaiveDate>, // 任意
+}
+
+impl TaskTemplate {
+    pub fn new(title: String, description: Option<String>, due_date: Option<NaiveDate>) -> Self {
+        Self {
+            title,
+            description,
+            due_date,
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize, Clone)]
 pub struct ScheduledTask {
     pub id: Uuid,
-    pub task: Task,
+    pub task: TaskTemplate,
     pub pattern: SchedulePattern,
     pub last_triggered: Option<NaiveDate>,
 }
 
 impl ScheduledTask {
-    pub fn new(task: Task, pattern: SchedulePattern) -> Self {
+    pub fn new(task: TaskTemplate, pattern: SchedulePattern) -> Self {
         Self {
             id: Uuid::new_v4(),
             task,

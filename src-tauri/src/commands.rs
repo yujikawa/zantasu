@@ -1,6 +1,6 @@
 use crate::models::hard_worker::HardWorker;
 use crate::models::task::{
-    DeleteTaskRequest, ScheduledTask, ScheduledTaskCreateDTO, Task, TaskCreateDTO,
+    DeleteTaskRequest, ScheduledTask, ScheduledTaskCreateDTO, Task, TaskCreateDTO, TaskTemplate,
 };
 use once_cell::sync::OnceCell;
 use std::path::PathBuf;
@@ -291,7 +291,7 @@ pub fn save_scheduled_task(
 
     std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
 
-    let new_task = Task::new(dto.task.title, dto.task.description, None);
+    let new_task = TaskTemplate::new(dto.task.title, dto.task.description, None);
 
     let new_schedule_task = ScheduledTask::new(new_task, dto.pattern);
 

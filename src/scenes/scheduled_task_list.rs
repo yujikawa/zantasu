@@ -3,11 +3,14 @@ use std::time::Duration;
 use crate::app::Scene;
 use crate::components::board::BoardComponent;
 use crate::components::menu_bar::MenuBarComponent;
+use crate::components::scheduled_task_form::ScheduledTaskModalComponent;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
 use crate::models::message::Message;
-use crate::models::task::ScheduledTask;
-use crate::models::task::{DeleteTaskRequest, Task};
+use crate::models::task::{
+    DeleteTaskRequest, ScheduledTask, ScheduledTaskCreateDTO, ScheduledTaskFormState,
+    TaskCreateDTO, TaskFormState,
+};
 use leptos::task::{self, spawn_local};
 use leptos::{logging, prelude::*};
 use wasm_bindgen::prelude::*;
@@ -24,6 +27,44 @@ pub fn ScheduledTaskListScene(
     hardworker: RwSignal<Option<HardWorker>>,
     tasks: RwSignal<Option<Vec<ScheduledTask>>>,
 ) -> impl IntoView {
+    let selected_edit_scheduled_task = RwSignal::new(None::<ScheduledTask>);
+    let scheduled_task_form_state = RwSignal::new(ScheduledTaskFormState::new());
+
+    let on_cancel = move || selected_edit_scheduled_task.set(None);
+    let on_submit = move || {
+        let new_task = TaskCreateDTO::new(
+            scheduled_task_form_state.get().task.title,
+            if scheduled_task_form_state.get().task.description.is_empty() {
+                None
+            } else {
+                Some(scheduled_task_form_state.get().task.description)
+            },
+            None,
+        );
+
+        let pattern = scheduled_task_form_state.get().pattern;
+
+        // let dto = ScheduledTaskCreateDTO::new(new_task, pattern);
+
+        let dto = ScheduledTask {
+            id: selected_edit_scheduled_task.get().unwrap().id,
+            task: new_task,
+            pattern: pattern,
+        };
+
+        logging::log!("{:?}", dto);
+
+        spawn_local(async move {
+            let args = serde_wasm_bindgen::to_value(&serde_json::json!({ "task": dto })).unwrap();
+            let result = invoke("update_scheduled_task_command", args).await;
+            if let Ok(new_tasks) = serde_wasm_bindgen::from_value::<Vec<ScheduledTask>>(result) {
+                tasks.set(Some(new_tasks));
+            }
+        });
+        // scheduled_task_form_state.set(ScheduledTaskFormState::new());
+        selected_edit_scheduled_task.set(None);
+    };
+
     let character = RwSignal::new("receptionist/explain2.png".to_string());
     let selected_task_id = RwSignal::new(None::<String>);
 
@@ -89,6 +130,7 @@ pub fn ScheduledTaskListScene(
                         key=|task| task.clone() // task自体がキー
                         children=move |task| {
                             let task_select = task.clone();
+                            let task_edit = task.clone();
                             let task_delete = task.clone();
 
                             view! {
@@ -106,6 +148,24 @@ pub fn ScheduledTaskListScene(
                                     </div>
 
                                     <div class="task-operation-buttons">
+                                    <button class="task-edit" on:click=move |_| {
+                                        selected_edit_scheduled_task.set(Some(task_edit.clone()));
+
+                                        let new_task = TaskFormState {
+                                            title: task_edit.task.title.clone(),
+                                            description: task_edit.task.description.clone().unwrap_or_default(),
+                                            due_date: task_edit.task.due_date.clone().unwrap_or_default(),
+                                        };
+
+
+                                        scheduled_task_form_state.set(ScheduledTaskFormState {
+                                            task: new_task,
+                                            pattern: task_edit.pattern.clone(),
+                                        });
+
+                                    }>
+                                        "編集"
+                                    </button>
                                     <button class="task-delete"
                                     on:click=move |e| {
                                         e.stop_propagation();
@@ -154,8 +214,15 @@ pub fn ScheduledTaskListScene(
 
         </div>
         // タスク一覧終了
+
+
     </div>
 
+    <Show
+        when=move || selected_edit_scheduled_task.get().is_some()
+        fallback=|| ()>
+    <ScheduledTaskModalComponent form=scheduled_task_form_state on_submit=on_submit submit_label="定期依頼の更新" on_cancel=on_cancel/>
 
+    </Show>
     }
 }

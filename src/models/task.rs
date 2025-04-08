@@ -33,7 +33,6 @@ pub struct DeleteTaskRequest {
 #[derive(Deserialize, Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 #[serde(tag = "pattern_type")]
 pub enum SchedulePattern {
-    OneTime { datetime: String },
     Monthly { day: u32, time: String },
     Weekly { weekday: u32, time: String },
     Daily { time: String },
@@ -42,7 +41,6 @@ pub enum SchedulePattern {
 impl SchedulePattern {
     pub fn to_pattern_string(&self) -> String {
         match self {
-            SchedulePattern::OneTime { datetime } => format!("1回限り: {}", datetime),
             SchedulePattern::Monthly { day, time } => format!("毎月{}日の{}", day, time),
             SchedulePattern::Weekly { weekday, time } => {
                 let day_str = match weekday {
@@ -62,6 +60,8 @@ impl SchedulePattern {
     }
 }
 
+// API連携用
+
 #[derive(Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct ScheduledTaskCreateDTO {
     pub task: TaskCreateDTO,
@@ -79,4 +79,40 @@ pub struct ScheduledTask {
     pub id: String,
     pub task: TaskCreateDTO,
     pub pattern: SchedulePattern,
+}
+
+// Form連携用
+#[derive(Deserialize, Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+pub struct ScheduledTaskFormState {
+    pub task: TaskFormState,
+    pub pattern: SchedulePattern,
+}
+
+impl ScheduledTaskFormState {
+    pub fn new() -> Self {
+        ScheduledTaskFormState {
+            task: TaskFormState::new(),
+            pattern: SchedulePattern::Monthly {
+                day: 1,
+                time: "09:00".to_string(),
+            },
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+pub struct TaskFormState {
+    pub title: String,
+    pub description: String,
+    pub due_date: String,
+}
+
+impl TaskFormState {
+    pub fn new() -> Self {
+        TaskFormState {
+            title: "".to_string(),
+            description: "".to_string(),
+            due_date: "".to_string(),
+        }
+    }
 }

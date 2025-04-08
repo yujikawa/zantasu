@@ -2,12 +2,12 @@ use std::time::Duration;
 
 use crate::app::Scene;
 use crate::components::board::BoardComponent;
-use crate::components::edit_task_mordal::EditTaslMordalComponent;
 use crate::components::menu_bar::MenuBarComponent;
+use crate::components::oneshot_task_form::OneShotTaskFormComponent;
 use crate::components::window_message::WindowMessage;
 use crate::models::hard_worker::HardWorker;
 use crate::models::message::Message;
-use crate::models::task::{DeleteTaskRequest, Task};
+use crate::models::task::{DeleteTaskRequest, Task, TaskFormState};
 use leptos::task::{self, spawn_local};
 use leptos::{logging, prelude::*};
 use shared::dto::task::TaskResponse;
@@ -28,7 +28,36 @@ pub fn TaskListScene(
     let character = RwSignal::new("receptionist/explain1.png".to_string());
     let selected_task_id = RwSignal::new(None::<String>);
     let selected_edit_task = RwSignal::new(None::<Task>);
-
+    let task_form_state = RwSignal::new(TaskFormState::new());
+    let on_cancel = move || selected_edit_task.set(None);
+    let on_submit = move || {
+        let new_task = Task {
+            id: selected_edit_task.get().unwrap().id,
+            title: task_form_state.get().title,
+            description: if task_form_state.get().description.is_empty() {
+                None
+            } else {
+                Some(task_form_state.get().description)
+            },
+            due_date: if task_form_state.get().due_date.is_empty() {
+                None
+            } else {
+                Some(task_form_state.get().due_date)
+            },
+        };
+        spawn_local(async move {
+            let args = serde_wasm_bindgen::to_value(&serde_json::json!({
+                "task": new_task
+            }))
+            .unwrap();
+            let result = invoke("update_task_command", args).await;
+            if let Ok(new_tasks) = serde_wasm_bindgen::from_value::<Vec<Task>>(result) {
+                // タスクの新規登録
+                tasks.set(Some(new_tasks));
+                selected_edit_task.set(None);
+            }
+        });
+    };
     let message = RwSignal::new(Message::new(
         "ギルド受付嬢".to_string(),
         format!(
@@ -36,8 +65,6 @@ pub fn TaskListScene(
             hardworker.get().unwrap().name
         ),
     ));
-
-
 
     fn select_task(
         character: RwSignal<String>,
@@ -112,7 +139,16 @@ pub fn TaskListScene(
                                     </div>
 
                                     <div class="task-operation-buttons">
-                                    <button class="task-edit" on:click=move |_| selected_edit_task.set(Some(task_edit.clone()))>
+                                    <button class="task-edit" on:click=move |_| {
+
+                                        selected_edit_task.set(Some(task_edit.clone()));
+                                        let t = task_edit.clone();
+                                        task_form_state.set(TaskFormState {
+                                            title: t.title,
+                                            description: t.description.unwrap_or("".to_string()),
+                                            due_date: t.due_date.unwrap_or("".to_string())
+                                        });
+                                    }>
                                         "編集"
                                     </button>
 
@@ -213,7 +249,7 @@ pub fn TaskListScene(
     <Show
     when=move || selected_edit_task.get().is_some()
     fallback=|| ()>
-        <EditTaslMordalComponent tasks=tasks task=selected_edit_task/>
+        <OneShotTaskFormComponent on_submit=on_submit submit_label="依頼を更新する" on_cancel=on_cancel task=task_form_state/>
     </Show>
 
     }

@@ -754,6 +754,8 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    -webkit-app-region: no-drag;
+
 }
 
 .modal-content {
