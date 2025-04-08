@@ -77,7 +77,10 @@ pub fn TaskListScene(
         let new_text = match selected_task.description {
             Some(description) => {
                 character.set("receptionist/explain_task.png".to_string());
-                format!("依頼の詳細は..{}ということみたいです！", description)
+                format!(
+                    "依頼タイトルの「{}」の詳細は..{}ということみたいです！",
+                    selected_task.title, description
+                )
             }
             None => {
                 character.set("receptionist/explain_task_confused.png".to_string());
@@ -134,7 +137,7 @@ pub fn TaskListScene(
                                 }
                                 on:click=move |_| select_task(character, message, task_select.clone(), selected_task_id)>
                                     <div class="task-item-basic">
-                                    <div>{ task.title.clone() }</div>
+                                    <div class="task-item-title">{ task.title.clone() }</div>
                                     <div>{task.due_date.clone().unwrap_or("締切未定".into())}</div>
                                     </div>
 
