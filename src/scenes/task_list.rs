@@ -84,7 +84,10 @@ pub fn TaskListScene(
             }
             None => {
                 character.set("receptionist/explain_task_confused.png".to_string());
-                format!("依頼の詳細は..無いみたいですね..")
+                format!(
+                    "依頼タイトルの「{}」の詳細は..無いみたいですね..",
+                    selected_task.title
+                )
             }
         };
 

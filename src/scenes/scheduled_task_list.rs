@@ -94,7 +94,7 @@ pub fn ScheduledTaskListScene(
             }
             None => {
                 character.set("receptionist/explain_task_confused.png".to_string());
-                format!("依頼の詳細は..無いみたいですね..")
+                format!("定期依頼タイトルの「{}」の依頼の詳細は..無いみたいですね..", selected_task.task.title)
             }
         };
 
