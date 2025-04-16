@@ -187,7 +187,7 @@ pub fn TaskListScene(
                                                     "ギルド受付嬢".to_string(),
                                                     format!("ほかに報告したい依頼があれば引き続き伺います!"),
                                                 ));
-                                                character.set("receptionist/watching.png".to_string());
+                                                character.set("receptionist/explain1.png".to_string());
                                             },
                                             Duration::from_secs(3),
                                         );
@@ -230,7 +230,7 @@ pub fn TaskListScene(
                                                     "ギルド受付嬢".to_string(),
                                                     format!("ほかに報告したい依頼があれば引き続き伺います!"),
                                                 ));
-                                                character.set("receptionist/watching.png".to_string());
+                                                character.set("receptionist/explain1.png".to_string());
                                             },
                                             Duration::from_secs(3),
                                         );
